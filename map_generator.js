@@ -8,7 +8,6 @@ module.exports = {
     for (var i = 0; i < blockedCells; i++) {
       do {
         var newBlockIndex = Math.floor(Math.random() * numberOfCells);
-        console.log(newBlockIndex)
       } while (indexesOfBlockedCells.indexOf(newBlockIndex) >= 0);
       indexesOfBlockedCells[i] = newBlockIndex;
       finalGrid[newBlockIndex] = "B";
@@ -31,11 +30,8 @@ module.exports = {
         problem += "m" + i + j + " ";
         var newMonsterIndex = Math.floor(Math.random() * possibleLocations.length);
         monsterIndexes[i].push(possibleLocations[newMonsterIndex]);
-        //console.log(possibleLocations);
-        //console.log(newMonsterIndex);
         finalGrid[possibleLocations[newMonsterIndex].substring(1)] = "M" + i + j;
         possibleLocations.splice(newMonsterIndex, 1);
-        //console.log(possibleLocations);
       }
       var newWeaponIndex = Math.floor(Math.random() * possibleLocations.length);
       weaponIndexes.push(possibleLocations[newWeaponIndex]);
@@ -97,9 +93,9 @@ module.exports = {
 
     for (var i = 0; i < width*height; i++) {
       if (finalGrid[i] === undefined) {
-        process.stdout.write("    *     ");
+        process.stdout.write("\tp"+i+"\t");
       } else {
-        process.stdout.write("    " + finalGrid[i] + "    ");
+        process.stdout.write("\t" + finalGrid[i] + "\t");
       }
       if (i % width == width - 1) {
         process.stdout.write("\n")

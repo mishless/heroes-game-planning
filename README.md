@@ -1,8 +1,8 @@
 ### Planning for a domain inspired by the game Heroes of Might and Magic
 
 How to run? 
-1. Install python 3
-2. Run ```pip install pddlpy```
-3. Run ```py main.py```
+1. Install Node.js
+2. Run ```npm install```
+3. Run ```node proccess.js```
 
-The result should be information about the domain and the problem.
+You can change the input parameters for generating the grid in the process.js and expeirment. The result should be a plan proposed by a brute-force planner.

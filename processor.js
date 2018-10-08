@@ -3,7 +3,7 @@ var mapGenerator = require('./map_generator')
 var fs = require('fs');
 // Load the domain and problem.
 
-problem = mapGenerator.generate(5, 6, 2, [1]);
+problem = mapGenerator.generate(5, 6, 9, [1, 2]);
 fs.writeFile("./hero_problem.pddl", problem, function(err) {
     if(err) {
         return console.log(err);

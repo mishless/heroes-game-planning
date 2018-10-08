@@ -13,7 +13,7 @@ fs.writeFile("./hero_problem.pddl", problem, function(err) {
 
 strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, problem) {
     // Run the problem against the domain, using depth-first-search.
-    var solutions = strips.solve(domain, problem, isDepthFirstSearch = false);
+    var solutions = strips.solve(domain, problem, cost);
     // Display each solution.
     for (var i in solutions) {
         var solution = solutions[i];
@@ -23,3 +23,17 @@ strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, 
         }
     }
 });
+
+function cost(state) {
+  var cost = 100;
+  for (var i in state.actions) {
+    var action = state.actions[i].action;
+
+    if (action === "has-castle") {
+      cost -= 20;
+    } else if (action.indexOf("has-") !== -1) {
+      cost -= 10;
+    }
+  }
+  return cost;
+}

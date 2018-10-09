@@ -1,28 +1,28 @@
+let randomProperty = function(obj) {
+    var keys = Object.keys(obj)
+    return keys[keys.length * Math.random() << 0];
+};
+
 module.exports = {
   encode: function(domain, problem) {
-    types = {};
     actions = {};
     instances = {};
-    let i = 0;
     domain.types.forEach(function(type) {
-      types[type] = i++;
-      instances[types[type]] = [];
+      instances[type] = [];
     });
-    i = 0;
     domain.actions.forEach(function(action) {
-      actions[action.action] = {'id': i++, 'parameters': []};
+      actions[action.action] = {'parameters': []};
       action.parameters.forEach(function(parameter) {
-         actions[action.action].parameters.push(types[parameter.type]);
+         actions[action.action].parameters.push(parameter.type);
       });
     });
-    i = 0;
     for (type in domain.values) {
+      instances[type] = [];
       domain.values[type].forEach(function(object) {
-        instances[types[type]][object] = i++;
+        instances[type].push(object);
       });
     };
     return {
-      'types': types,
       'actions': actions,
       'instances': instances
     }
@@ -32,14 +32,14 @@ module.exports = {
     for (let i=0; i<populationSize; i++) {
       let newChromosome = [];
       for (let j=0; j<chromesomeSize; j++) {
-        let randomActionIndex = Math.floor(Math.random() * Object.keys(mapping.actions).length);
-        let randomAction = mapping.actions[Object.keys(mapping.actions)[randomActionIndex]];
+        let randomActionKey = randomProperty(mapping.actions);
+        let randomAction = mapping.actions[randomActionKey];
         let randomParameterInstances = []
         randomAction.parameters.forEach(function(parameterType) {
-          let randomParameterInstanceIndex = Math.floor(Math.random() * Object.keys(mapping.instances[parameterType]).length);
-          randomParameterInstances.push(mapping.instances[parameterType][Object.keys(mapping.instances[parameterType])[randomParameterInstanceIndex]]);
+          let randomParameterInstanceKey = randomProperty(mapping.instances[parameterType]);
+          randomParameterInstances.push(mapping.instances[parameterType][randomParameterInstanceKey]);
         });
-        newChromosome.push([randomAction.id, randomParameterInstances]);
+        newChromosome.push([randomActionKey, randomParameterInstances]);
       }
       population.push(newChromosome);
     }

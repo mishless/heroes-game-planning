@@ -2,9 +2,7 @@
 
 (define (domain heroes-world)
    (:requirements :strips :typing)
-   (:types hero location monster weapon - object
-	m0 m1 m2 m3 m4 - monster
-	w0 w1 w2 w3 w4 - weapon)
+   (:types hero location m0 m1 m2 m3 m4 w0 w1 w2 w3 w4)
 
   (:predicates  (at ?o - object ?l - location)		;; Position of an object
                 (adjacent ?l1 ?l2 - location)		;; Whether two locations are connected
@@ -26,35 +24,35 @@
 
    (:action kill-m0
       :parameters (?h - hero ?m - m0 ?l1 - location ?l2 - location)
-      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2) 
+      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2)
 			(has-t0 ?h))
       :effect (and(not (at ?m ?l2)) (not (guarded ?l2)) (at ?h ?l2) (not (at ?h ?l1)) (has-castle ?l2))
    )
 
    (:action kill-m1
       :parameters (?h - hero ?m - m1 ?l1 - location ?l2 - location)
-      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2) 
+      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2)
 			(has-t1 ?h))
       :effect (and(not (at ?m ?l2)) (not (guarded ?l2)) (at ?h ?l2) (not (at ?h ?l1)) (has-castle ?l2))
    )
 
    (:action kill-m2
       :parameters (?h - hero ?m - m2 ?l1 - location ?l2 - location)
-      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2) 
+      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2)
 			(has-t2 ?h))
       :effect (and(not (at ?m ?l2)) (not (guarded ?l2)) (at ?h ?l2) (not (at ?h ?l1)) (has-castle ?l2))
    )
 
    (:action kill-m3
       :parameters (?h - hero ?m - m3 ?l1 - location ?l2 - location)
-      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2) 
+      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2)
 			(has-t3 ?h))
       :effect (and(not (at ?m ?l2)) (not (guarded ?l2)) (at ?h ?l2) (not (at ?h ?l1)) (has-castle ?l2))
    )
 
    (:action kill-m4
       :parameters (?h - hero ?m - m4 ?l1 - location ?l2 - location)
-      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2) 
+      :precondition (and (at ?h ?l1) (at ?m ?l2) (adjacent ?l1 ?l2) (guarded ?l2)
 			(has-t4 ?h))
       :effect (and(not (at ?m ?l2)) (not (guarded ?l2)) (at ?h ?l2) (not (at ?h ?l1)) (has-castle ?l2))
    )

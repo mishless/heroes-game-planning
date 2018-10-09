@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-newRandomAction: function(mapping) {
+let newRandomAction = function(mapping) {
   // generate new random action
   let randomActionKey = randomProperty(mapping.actions);
   let randomAction = mapping.actions[randomActionKey];
@@ -12,7 +11,7 @@ newRandomAction: function(mapping) {
   return [randomActionKey, randomParameterInstances];
 };
 
-mutate: function(mapping, chromosome) {
+let mutate = function(mapping, chromosome) {
   var growthProb = 0.05;
   var shrinkProb = 0.05;
   var swapProb = 0.05;
@@ -69,8 +68,6 @@ mutate: function(mapping, chromosome) {
   return chromosome;
 };
 
-=======
->>>>>>> 69132771c8cf7412c97a0e964df5f6275682fa28
 let randomProperty = function(obj) {
     var keys = Object.keys(obj)
     return keys[keys.length * Math.random() << 0];

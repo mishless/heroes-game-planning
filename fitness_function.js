@@ -1,10 +1,11 @@
 const strips = require('strips');
 const R = require('ramda');
 
+const cloneObject = object => JSON.parse(JSON.stringify(object));
 
-let getApplicableActionInState = function(state, action) {
+let getApplicableActionInState = (state, action)  => {
     let resolvedAction = null;
-    const populatedEffect = JSON.parse(JSON.stringify(action.effect));
+    const populatedEffect = cloneObject(action.effect);
     for (const m in action.effect) {
         var effect = action.effect[m];
         for (const n in effect.parameters) {
@@ -21,7 +22,7 @@ let getApplicableActionInState = function(state, action) {
         }
     }
 
-    resolvedAction = JSON.parse(JSON.stringify(action));
+    resolvedAction = cloneObject(action);
     resolvedAction.effect = populatedEffect;
     resolvedAction.map = action.map;
     return resolvedAction;
@@ -35,7 +36,7 @@ module.exports = {
   		let currentAction = chromosome[i][0];
   		let currentParameters = chromosome[i][1];
       // In javascript this is how you make a deep copy of an array with nested objects :( kill me
-      let preconditions = JSON.parse(JSON.stringify(mapping.actions[currentAction].precondition[0]));
+      let preconditions = cloneObject(mapping.actions[currentAction].precondition[0]);
       let preconditionsAreSatisfied = true;
 
       let actualParameters = [];
@@ -73,7 +74,7 @@ module.exports = {
       let currentAction = chromosome[i][0];
       let currentParameters = chromosome[i][1];
       // In javascript this is how you make a deep copy of an array with nested objects :( kill me
-      let preconditions = JSON.parse(JSON.stringify(mapping.actions[currentAction].precondition[0]));
+      let preconditions = cloneObject(mapping.actions[currentAction].precondition[0]);
 
       let actualParameters = [];
       let j = 0;

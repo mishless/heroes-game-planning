@@ -83,15 +83,12 @@ module.exports = {
     for (let i = 0; i < chromosome.length; i++) {
       let currentAction = chromosome[i][0];
       let currentParameters = chromosome[i][1];
-      let preconditions = cloneObject(
-        mapping.actions[currentAction].precondition[0]
-      );
       // actualParameters is an object which keys are [parameters] and value is the currentParameter by index
       const actualParameters = Object.keys(mapping.actions[currentAction].parameters).reduce(
           (acc, parameter, index) => ({ ...acc, [parameter]: currentParameters[index] })
       , {});
 
-      preconditions = preconditions.map(precondition => {
+      const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
         const parameters = precondition.parameters.map(
           (
             parameter
@@ -99,7 +96,8 @@ module.exports = {
         );
         return {...precondition, parameters};
       });
-      let preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+
+      const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
         currentState,
         preconditions
       );
@@ -108,14 +106,11 @@ module.exports = {
         numberOfInvalidActions++;
       }
       if (preconditionsAreSatisfied) {
-        let actionToApply;
-        domain.actions.forEach(action => {
-          if (action.action === currentAction) {
-            actionToApply = action;
-          }
-        });
+        let actionToApply = domain.actions.find(({action}) => action === currentAction);
+        if (!actionToApply) { throw new Error('The action to apply doesnt exist in the domain')}
+
         actionToApply.map = actualParameters;
-        let actionToApplyWithEffect = getApplicableActionInState(
+        const actionToApplyWithEffect = getApplicableActionInState(
           currentState,
           actionToApply
         );

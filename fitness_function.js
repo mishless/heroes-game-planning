@@ -3,6 +3,23 @@ const R = require("ramda");
 
 const cloneObject = object => JSON.parse(JSON.stringify(object));
 
+// it gets the action to apply calculate it with the state and return STRIP apply action
+const updateCurrentState = ({domainActions, currentAction, actualParameters, currentState}) => {
+    let actionToApply = domainActions.find(({action}) => action === currentAction);
+    if (!actionToApply) { throw new Error('The action to apply doesnt exist in the domain')}
+
+    actionToApply.map = actualParameters;
+    let actionToApplyWithEffect = getApplicableActionInState(
+        currentState,
+        actionToApply
+    );
+
+    return strips.applyAction(
+        actionToApplyWithEffect,
+        currentState
+    );
+};
+
 // actualParameters is an object which keys are [parameters] and value is the currentParameter by index
 const getActualParameters = (parameters, currentParameters) => Object.keys(parameters).reduce(
     (acc, parameter, index) => ({ ...acc, [parameter]: currentParameters[index] })
@@ -21,7 +38,6 @@ const getApplicableActionInState = (state, action) => {
     });
     return { operation, parameters: effectParameters };
   });
-
   // Return the same action but with the newly calculated effect
   return { ...action, effect: newEffects };
 };
@@ -46,12 +62,18 @@ module.exports = {
       const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
 
       preconditions.forEach(precondition => {
-        precondition.parameters = precondition.parameters.map(
-          parameter => actualParameters[parameter]
+        // Returns a brand new precondition with only parameters changed keepin' precondition untouched
+        const parameterizedPrecondition = R.set(
+            R.lensProp('parameters'),
+            precondition.parameters.map(
+                parameter => actualParameters[parameter]
+            ),
+            precondition
         );
+
         let preconditionIsSatisfied = strips.isPreconditionSatisfied(
           currentState,
-          [precondition]
+          [parameterizedPrecondition]
         );
         if (!preconditionIsSatisfied) {
           numberOfPreconditionsNotSatisfied++;
@@ -59,21 +81,12 @@ module.exports = {
         }
       });
       if (preconditionsAreSatisfied) {
-        let actionToApply;
-        domain.actions.forEach(action => {
-          if (action.action === currentAction) {
-            actionToApply = action;
-          }
+        currentState = updateCurrentState({
+            domainActions: domain.actions,
+            currentAction,
+            actualParameters,
+            currentState,
         });
-        actionToApply.map = actualParameters;
-        let actionToApplyWithEffect = getApplicableActionInState(
-          currentState,
-          actionToApply
-        );
-        currentState = strips.applyAction(
-          actionToApplyWithEffect,
-          currentState
-        );
       }
     }
     console.log(numberOfPreconditionsNotSatisfied);
@@ -105,18 +118,12 @@ module.exports = {
         numberOfInvalidActions++;
       }
       if (preconditionsAreSatisfied) {
-        let actionToApply = domain.actions.find(({action}) => action === currentAction);
-        if (!actionToApply) { throw new Error('The action to apply doesnt exist in the domain')}
-
-        actionToApply.map = actualParameters;
-        const actionToApplyWithEffect = getApplicableActionInState(
-          currentState,
-          actionToApply
-        );
-        currentState = strips.applyAction(
-          actionToApplyWithEffect,
-          currentState
-        );
+          currentState = updateCurrentState({
+              domainActions: domain.actions,
+              currentAction,
+              actualParameters,
+              currentState,
+          });
       }
     }
     console.log(numberOfInvalidActions);

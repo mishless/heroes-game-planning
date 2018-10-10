@@ -20,9 +20,9 @@ strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, 
     // Generate initial population
     let initialPopulation = GA.generateIntialPopulation(domain, problem, strips.applicableActions, mapping, 10, 10);
     if (initialPopulation.length < 0) {
-      console.log("Invalid grid generated -no valid first move.");
+      console.log("Invalid grid generated - no valid first move.");
     }
-	 // for (var i = 0; i < initialPopulation.length; i++){
-	 //     var num_conflicts = FF.getNumberOfConflicts(mapping, initialPopulation[i], problem.states[0]);
-	 // }
+	 for (var i = 0; i < initialPopulation.length; i++){
+	     var num_conflicts = FF.getNumberOfConflicts(domain, mapping, initialPopulation[i], problem.states[0], strips.applyAction);
+	 }
 });

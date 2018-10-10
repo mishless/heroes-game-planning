@@ -21,22 +21,22 @@ let mutate = function(mapping, chromosome) {
 
   if (Math.random() <= growthProb) {
     // generate random index to add action to
-    var index = Math.floor((Math.random() * chromosome.length)) + 1;
+    var index = Math.floor((Math.random() * chromosome.length));
     // insert the random action into the chromosome
     chromosome.splice(index, 0, newRandomAction(mapping));
   };
 
   if (Math.random() <= shrinkProb) {
     // generate random index to remove action from
-    var index = Math.floor((Math.random() * chromosome.length)) + 1;
+    var index = Math.floor((Math.random() * chromosome.length));
     // remove action at specified index
     chromosome.splice(index, 1);
   };
 
   if (Math.random() <= swapProb) {
     // generate random indices to swap
-    var index_1 = Math.floor((Math.random() * chromosome.length)) + 1;
-    var index_2 = Math.floor((Math.random() * chromosome.length)) + 1;
+    var index_1 = Math.floor((Math.random() * chromosome.length));
+    var index_2 = Math.floor((Math.random() * chromosome.length));
     // swap the actions
     var action_1 = chromosome[index_1];
     var action_2 = chromosome[index_2];
@@ -46,18 +46,18 @@ let mutate = function(mapping, chromosome) {
 
   if (Math.random() <= replaceProb) {
     // generate random index to replace
-    var index = Math.floor((Math.random() * chromosome.length)) + 1;
+    var index = Math.floor((Math.random() * chromosome.length));
     // replace the action at index with new random action
     chromosome[index] = newRandomAction(mapping);
   };
 
   if (Math.random() <= paramProb) {
     // generate random index to mutate
-    var actionIndex = Math.floor((Math.random() * chromosome.length)) + 1;
+    var actionIndex = Math.floor((Math.random() * chromosome.length));
     // get parameters of action
     var parameterInstances = chromosome[index][1]
     // generate random index of parameter
-    var paramIndex = Math.floor((Math.random() * parameterInstances.length)) + 1;
+    var paramIndex = Math.floor((Math.random() * parameterInstances.length));
     // get a new property of the same type
     var paramType = mapping[chromosome[index][0]].parameters[paramIndex];
     var newProperty = randomProperty(mapping.instances[paramType]);
@@ -66,6 +66,17 @@ let mutate = function(mapping, chromosome) {
   };
 
   return chromosome;
+};
+
+let crossover = function(chromosome_1, chromosome_2) {
+  // currently only does crossover randomly, and not from an invalid move
+  var idx_1 = Math.floor((Math.random() * chromosome_1.length));
+  var idx_2 = Math.floor((Math.random() * chromosome_2.length));
+
+  var newChromosome_1 = chromosome_1.splice(idx_1, chromosome_1.length).concat(chromosome_2.splice(0, idx_2));
+  var newChromosome_2 = chromosome_2.splice(idx_2, chromosome_2.length).concat(chromosome_1.splice(0, idx_1));
+
+  return newChromosome_1, newChromosome_2;
 };
 
 let randomProperty = function(obj) {

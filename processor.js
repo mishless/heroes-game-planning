@@ -16,6 +16,7 @@ fs.writeFile("./hero_problem.pddl", problem, function(err) {
 strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, problem) {
     // Get encoding for GA
     let mapping = GA.encode(domain, problem);
+    //console.log(mapping.actions['move'].precondition);
     // Generate initial population
     let initialPopulation = GA.generateIntialPopulation(domain, problem, strips.applicableActions, mapping, 10, 10);
     if (initialPopulation.length < 0) {

@@ -2,14 +2,14 @@ module.exports = {
   getNumberOfConflicts: function (mapping, chromesome, currentState) {
   	var not_conflicts = 0;
   	var conflicts = 0;
-  	console.log("Current state actions: ");
-  	console.log(currentState.actions);
-  	console.log("////");
+  	// console.log("Current state actions: ");
+  	// console.log(currentState.actions);
+  	// console.log("////");
   	for (i = 0; i < chromesome.length ; i++) {
+      console.log(chromesome);
   		var chromeAction = chromesome[i][0];
   		var chromeParameters = chromesome[i][1];
   		var chromePrecond = mapping.actions[chromeAction].precondition[0];
-
   		for (var l = 0; l < chromePrecond.length; l++){
   			console.log("next");
   			var auxPrecond = chromePrecond[l];

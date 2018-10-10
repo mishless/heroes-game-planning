@@ -13,7 +13,7 @@ let newRandomAction = function(mapping) {
   return [randomActionKey, randomParameterInstances];
 };
 
-let getChromosomeValidActionFromState = function(domain, state, getValidActions) {
+let getGeneValidActionFromState = function(domain, state, getValidActions) {
   let validActions = getValidActions(domain, state);
   if (validActions.length > 0) {
     let randomValidAction = Math.floor((Math.random() * validActions.length));
@@ -64,14 +64,14 @@ module.exports = {
       }
     });
     let population = [];
-    let firstChromosome = getChromosomeValidActionFromState(domain, problem.states[0], applicableActions);
-    if (firstChromosome === null) {
+    let firstGene = getGeneValidActionFromState(domain, problem.states[0], applicableActions);
+    if (firstGene === null) {
       console.log("There is no valid first action.");
     } else {
-      population.push(firstChromosome);
-      for (let i=1; i<populationSize; i++) {
+      for (let i=0; i<populationSize; i++) {
         let newChromosome = [];
-        for (let j=0; j<chromesomeSize; j++) {
+        newChromosome.push(firstGene);
+        for (let j=1; j<chromesomeSize; j++) {
           let randomActionKey = randomProperty(mapping.actions);
           let randomAction = mapping.actions[randomActionKey];
           let randomParameterInstances = []

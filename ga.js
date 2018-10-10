@@ -43,11 +43,14 @@ module.exports = {
     }
   },
 
-  generateIntialPopulation: function (mapping, chromesomeSize, populationSize) {
+  generateIntialPopulation: function (mapping) {
+    let populationSize = config.population_size;
+    let chromosomeSize = config.chromosome_size;
+
     let population = [];
     for (let i=0; i<populationSize; i++) {
       let newChromosome = [];
-      for (let j=0; j<chromesomeSize; j++) {
+      for (let j=0; j<chromosomeSize; j++) {
         let randomActionKey = randomProperty(mapping.actions);
         let randomAction = mapping.actions[randomActionKey];
         let randomParameterInstances = []
@@ -126,7 +129,7 @@ module.exports = {
   var newChromosome_1 = chromosome_1.splice(idx_1, chromosome_1.length).concat(chromosome_2.splice(0, idx_2));
   var newChromosome_2 = chromosome_2.splice(idx_2, chromosome_2.length).concat(chromosome_1.splice(0, idx_1));
 
-  return newChromosome_1, newChromosome_2;
+  return [newChromosome_1, newChromosome_2];
   },
 
   select: function(population) {
@@ -145,6 +148,30 @@ module.exports = {
       }
     }
     return bestIndividual;
+  },
+
+  generateNewPopulation: function(currentPopulation) {
+    var newPopulation = [];
+    var populationSize = config.population_size;
+
+    for (var i = 0; i < (populationSize / 2); i++) {
+      var individual_1 = select(currentPopulation);
+      var individual_2 = select(currentPopulation);
+
+      if (Math.random() > config.crossover_prob) {
+        var children = crossover(individual_1, individual_2);
+        var child_1 = mutate(children[0]);
+        var child_2 = mutate(children[1]);
+
+        newPopulation.push(child_1);
+        newPopulation.push(child_2);
+
+      } else {
+        newPopulation.push(mutate(individual_1));
+        newPopulation.push(mutate(individual_2));
+      }
+    }
+    return newPopulation;
   },
 
   getFitness: function(chromosome) {

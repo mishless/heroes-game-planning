@@ -3,6 +3,11 @@ const R = require("ramda");
 
 const cloneObject = object => JSON.parse(JSON.stringify(object));
 
+// actualParameters is an object which keys are [parameters] and value is the currentParameter by index
+const getActualParameters = (parameters, currentParameters) => Object.keys(parameters).reduce(
+    (acc, parameter, index) => ({ ...acc, [parameter]: currentParameters[index] })
+    , {});
+
 const getApplicableActionInState = (state, action) => {
   // We map the effects to the new parameters
   const newEffects = action.effect.map(({ operation, parameters }) => {
@@ -38,11 +43,7 @@ module.exports = {
       );
       let preconditionsAreSatisfied = true;
 
-      let actualParameters = [];
-      let j = 0;
-      for (let parameter in mapping.actions[currentAction].parameters) {
-        actualParameters[parameter] = currentParameters[j++];
-      }
+      const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
 
       preconditions.forEach(precondition => {
         precondition.parameters = precondition.parameters.map(
@@ -83,10 +84,8 @@ module.exports = {
     for (let i = 0; i < chromosome.length; i++) {
       let currentAction = chromosome[i][0];
       let currentParameters = chromosome[i][1];
-      // actualParameters is an object which keys are [parameters] and value is the currentParameter by index
-      const actualParameters = Object.keys(mapping.actions[currentAction].parameters).reduce(
-          (acc, parameter, index) => ({ ...acc, [parameter]: currentParameters[index] })
-      , {});
+
+      const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
 
       const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
         const parameters = precondition.parameters.map(

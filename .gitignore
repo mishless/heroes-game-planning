@@ -1,2 +1,3 @@
 node_modules/*
+// Files that are generated dynamically
 hero_problem.pddl

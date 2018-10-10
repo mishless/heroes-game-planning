@@ -4,12 +4,12 @@ let newRandomAction = function(mapping) {
   // generate new random action
   let randomActionKey = randomProperty(mapping.actions);
   let randomAction = mapping.actions[randomActionKey];
-  let randomParameterInstances = []
-  randomAction.parameters.forEach(function(parameterType) {
+  let randomParameterInstances = [];
+  for (parameter in randomAction.parameters) {
+    let parameterType = randomAction.parameters[parameter];
     let randomParameterInstanceKey = randomProperty(mapping.instances[parameterType]);
     randomParameterInstances.push(mapping.instances[parameterType][randomParameterInstanceKey]);
-  });
-
+  }
   return [randomActionKey, randomParameterInstances];
 };
 
@@ -27,7 +27,7 @@ let getGeneValidActionFromState = function(domain, state, getValidActions) {
 };
 
 let randomProperty = function(obj) {
-    var keys = Object.keys(obj)
+    const keys = Object.keys(obj);
     return keys[keys.length * Math.random() << 0];
 };
 
@@ -35,19 +35,19 @@ module.exports = {
   encode: function(domain, problem) {
     actions = {};
     instances = {};
-    domain.types.forEach(function(type) {
+    domain.types.forEach(type => {
       instances[type] = [];
     });
-    domain.actions.forEach(function(action) {
+    domain.actions.forEach(action => {
       actions[action.action] = {'parameters': [], 'precondition': []};
-      action.parameters.forEach(function(parameter) {
-         actions[action.action].parameters.push(parameter.type);
+      action.parameters.forEach(parameter => {
+         actions[action.action].parameters[parameter.parameter] = parameter.type;
       });
       actions[action.action].precondition.push(action.precondition);
     });
     for (type in domain.values) {
       instances[type] = [];
-      domain.values[type].forEach(function(object) {
+      domain.values[type].forEach(object => {
         instances[type].push(object);
       });
     };
@@ -59,7 +59,7 @@ module.exports = {
 
   generateIntialPopulation: function (domain, problem, applicableActions, mapping, chromesomeSize, populationSize) {
     let initialState;
-    problem.states.forEach(function(state) {
+    problem.states.forEach(state => {
       if (state.name === 'init') {
         initialState = state;
       }
@@ -76,10 +76,11 @@ module.exports = {
           let randomActionKey = randomProperty(mapping.actions);
           let randomAction = mapping.actions[randomActionKey];
           let randomParameterInstances = []
-          randomAction.parameters.forEach(function(parameterType) {
+          for (parameter in randomAction.parameters) {
+            let parameterType = randomAction.parameters[parameter];
             let randomParameterInstanceKey = randomProperty(mapping.instances[parameterType]);
             randomParameterInstances.push(mapping.instances[parameterType][randomParameterInstanceKey]);
-          });
+          }
           newChromosome.push([randomActionKey, randomParameterInstances]);
         }
         population.push(newChromosome);
@@ -89,11 +90,11 @@ module.exports = {
   },
 
   mutate: function(mapping, chromosome) {
-    var growthProb = config.mutation_growth_prob;
-    var shrinkProb = config.mutation_shrink_prob;
-    var swapProb = config.mutation_swap_prob;
-    var replaceProb = config.mutation_replace_prob;
-    var paramProb = config.mutation_param_prob;
+    const growthProb = config.mutation_growth_prob;
+    const shrinkProb = config.mutation_shrink_prob;
+    const swapProb = config.mutation_swap_prob;
+    const replaceProb = config.mutation_replace_prob;
+    const paramProb = config.mutation_param_prob;
     // maybe add heuristic mutation?
     if (Math.random() <= growthProb) {
       // generate random index to add action to
@@ -111,11 +112,11 @@ module.exports = {
 
     if (Math.random() <= swapProb) {
       // generate random indices to swap
-      var index_1 = Math.floor((Math.random() * chromosome.length));
-      var index_2 = Math.floor((Math.random() * chromosome.length));
+      const index_1 = Math.floor((Math.random() * chromosome.length));
+      const index_2 = Math.floor((Math.random() * chromosome.length));
       // swap the actions
-      var action_1 = chromosome[index_1];
-      var action_2 = chromosome[index_2];
+      const action_1 = chromosome[index_1];
+      const action_2 = chromosome[index_2];
       chromosome[index_1] = action_2;
       chromosome[index_2] = action_1;
     };
@@ -129,14 +130,14 @@ module.exports = {
 
     if (Math.random() <= paramProb) {
       // generate random index to mutate
-      var actionIndex = Math.floor((Math.random() * chromosome.length));
+      const actionIndex = Math.floor((Math.random() * chromosome.length));
       // get parameters of action
-      var parameterInstances = chromosome[index][1]
+      const parameterInstances = chromosome[index][1];
       // generate random index of parameter
-      var paramIndex = Math.floor((Math.random() * parameterInstances.length));
+      const paramIndex = Math.floor((Math.random() * parameterInstances.length));
       // get a new property of the same type
-      var paramType = mapping[chromosome[index][0]].parameters[paramIndex];
-      var newProperty = randomProperty(mapping.instances[paramType]);
+      const paramType = mapping[chromosome[index][0]].parameters[paramIndex];
+      const newProperty = randomProperty(mapping.instances[paramType]);
       // replace the old property with the new property
       chromosome[index][1][paramIndex] = newProperty;
     };
@@ -146,25 +147,25 @@ module.exports = {
 
   crossover: function(chromosome_1, chromosome_2) {
   // currently does crossover randomly, not from an invalid move
-  var idx_1 = Math.floor((Math.random() * chromosome_1.length));
-  var idx_2 = Math.floor((Math.random() * chromosome_2.length));
+  const idx_1 = Math.floor((Math.random() * chromosome_1.length));
+  const idx_2 = Math.floor((Math.random() * chromosome_2.length));
 
-  var newChromosome_1 = chromosome_1.splice(idx_1, chromosome_1.length).concat(chromosome_2.splice(0, idx_2));
-  var newChromosome_2 = chromosome_2.splice(idx_2, chromosome_2.length).concat(chromosome_1.splice(0, idx_1));
+  const newChromosome_1 = chromosome_1.splice(idx_1, chromosome_1.length).concat(chromosome_2.splice(0, idx_2));
+  const newChromosome_2 = chromosome_2.splice(idx_2, chromosome_2.length).concat(chromosome_1.splice(0, idx_1));
 
   return [newChromosome_1, newChromosome_2];
   },
 
   select: function(population) {
     // select the best individual in a tournament of size N
-    var N = config.tournament_size;
+    const N = config.tournament_size;
 
-    var bestIndividual = population[Math.floor((Math.random() * population.length))];
-    var bestFitness = getFitness(bestIndividual);
+    let bestIndividual = population[Math.floor((Math.random() * population.length))];
+    const bestFitness = getFitness(bestIndividual);
 
-    for (var i = 0; i < N; i++) {
-      var individual = population[Math.floor((Math.random() * population.length))];
-      var fitness = getFitness(individual);
+    for (let i = 0; i < N; i++) {
+      const individual = population[Math.floor((Math.random() * population.length))];
+      const fitness = getFitness(individual);
 
       if (fitness > bestFitness) {
         bestIndividual = individual;
@@ -174,17 +175,17 @@ module.exports = {
   },
 
   generateNewPopulation: function(currentPopulation) {
-    var newPopulation = [];
-    var populationSize = config.population_size;
+    const newPopulation = [];
+    const populationSize = config.population_size;
 
-    for (var i = 0; i < (populationSize / 2); i++) {
-      var individual_1 = select(currentPopulation);
-      var individual_2 = select(currentPopulation);
+    for (let i = 0; i < (populationSize / 2); i++) {
+      const individual_1 = select(currentPopulation);
+      const individual_2 = select(currentPopulation);
 
       if (Math.random() > config.crossover_prob) {
-        var children = crossover(individual_1, individual_2);
-        var child_1 = mutate(children[0]);
-        var child_2 = mutate(children[1]);
+        const children = crossover(individual_1, individual_2);
+        const child_1 = mutate(children[0]);
+        const child_2 = mutate(children[1]);
 
         newPopulation.push(child_1);
         newPopulation.push(child_2);

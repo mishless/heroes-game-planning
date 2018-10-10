@@ -3,5 +3,6 @@
   "mutation_shrink_prob": 0.05,
   "mutation_swap_prob": 0.05,
   "mutation_replace_prob": 0.05,
-  "mutation_param_prob": 0.05
+  "mutation_param_prob": 0.05,
+  "tournament_size": 5
 }

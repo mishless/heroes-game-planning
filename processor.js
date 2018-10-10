@@ -1,19 +1,20 @@
-var strips = require('strips');
-var mapGenerator = require('./map_generator')
-var GA = require('./ga')
-var FF = require('./fitness_function')
-var fs = require('fs');
+const strips = require('strips');
+const mapGenerator = require('./map_generator');
+const GA = require('./ga');
+const FF = require('./fitness_function');
+const fs = require('fs');
 // Load the domain and problem.
 
-problem = mapGenerator.generate(9, 9, 0, [1, 1, 1, 1, 1]);
-fs.writeFile("./hero_problem.pddl", problem, function(err) {
+const PROBLEM = mapGenerator.generate(9, 9, 0, [1, 1, 1, 1, 1]);
+
+fs.writeFile("./hero_problem.pddl", PROBLEM, err => {
     if(err) {
         return console.log(err);
     }
     console.log("The file was saved!");
 });
 
-strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, problem) {
+strips.load('./hero_domain_final.pddl', './hero_problem.pddl', (domain, problem) => {
     // Get encoding for GA
     let mapping = GA.encode(domain, problem);
     //console.log(mapping.actions['move'].precondition);
@@ -24,7 +25,7 @@ strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, 
     }
 	 //for (var i = 0; i < initialPopulation.length; i++){
    console.log( initialPopulation[0]);
-	     var num_conflicts = FF.getNumberOfPreconditionsNotSatisfied(domain, mapping, initialPopulation[0], problem.states[0]);
+	     const num_conflicts = FF.getNumberOfPreconditionsNotSatisfied(domain, mapping, initialPopulation[0], problem.states[0]);
        FF.getNumberOfInvalidActions(domain, mapping, initialPopulation[0], problem.states[0])
 	 //}
 });

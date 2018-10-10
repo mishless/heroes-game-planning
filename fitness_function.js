@@ -3,20 +3,20 @@ const R = require('ramda');
 
 
 let getApplicableActionInState = function(state, action) {
-    var resolvedAction = null;
-    var populatedEffect = JSON.parse(JSON.stringify(action.effect));
-    for (var m in action.effect) {
+    let resolvedAction = null;
+    const populatedEffect = JSON.parse(JSON.stringify(action.effect));
+    for (const m in action.effect) {
         var effect = action.effect[m];
-        for (var n in effect.parameters) {
-            var parameter = effect.parameters[n];
-            var value = action.map[parameter];
+        for (const n in effect.parameters) {
+            const parameter = effect.parameters[n];
+            const value = action.map[parameter];
 
             if (value) {
                 // Assign this value to all instances of this parameter in the effect.
                 populatedEffect[m].parameters[n] = value;
             }
             else {
-                console.log('* ERROR: Value not found for parameter ' + parameter + '.');
+                console.log(`* ERROR: Value not found for parameter ${parameter}.`);
             }
         }
     }
@@ -30,7 +30,7 @@ let getApplicableActionInState = function(state, action) {
 
 module.exports = {
   getNumberOfPreconditionsNotSatisfied: function (domain, mapping, chromosome, currentState) {
-  	var numberOfPreconditionsNotSatisfied = 0;
+  	let numberOfPreconditionsNotSatisfied = 0;
   	for (i = 0; i < chromosome.length ; i++) {
   		let currentAction = chromosome[i][0];
   		let currentParameters = chromosome[i][1];
@@ -44,10 +44,8 @@ module.exports = {
         actualParameters[parameter] = currentParameters[j++];
       }
 
-      preconditions.forEach(function(precondition) {
-        precondition.parameters = precondition.parameters.map(function(parameter) {
-          return actualParameters[parameter]
-        });
+      preconditions.forEach(precondition => {
+        precondition.parameters = precondition.parameters.map(parameter => actualParameters[parameter]);
         let preconditionIsSatisfied = strips.isPreconditionSatisfied(currentState, [precondition]);
         if (!preconditionIsSatisfied) {
             numberOfPreconditionsNotSatisfied++;
@@ -56,7 +54,7 @@ module.exports = {
       });
       if (preconditionsAreSatisfied) {
         let actionToApply;
-        domain.actions.forEach(function(action) {
+        domain.actions.forEach(action => {
           if (action.action === currentAction) {
             actionToApply = action;
           }
@@ -70,7 +68,7 @@ module.exports = {
   	return numberOfPreconditionsNotSatisfied;
   },
   getNumberOfInvalidActions(domain, mapping, chromosome, currentState) {
-    var numberOfInvalidActions = 0;
+    let numberOfInvalidActions = 0;
     for (i = 0; i < chromosome.length ; i++) {
       let currentAction = chromosome[i][0];
       let currentParameters = chromosome[i][1];
@@ -83,11 +81,9 @@ module.exports = {
         actualParameters[parameter] = currentParameters[j++];
       }
 
-      preconditions.forEach(function(precondition) {
-        precondition.parameters = precondition.parameters.map(function(parameter) {
-          //console.log(parameter);
-          return actualParameters[parameter];
-        });
+      preconditions.forEach(precondition => {
+        precondition.parameters = precondition.parameters.map(parameter => //console.log(parameter);
+        actualParameters[parameter]);
       });
       let preconditionsAreSatisfied = strips.isPreconditionSatisfied(currentState, preconditions);
       //console.log(preconditions);
@@ -96,7 +92,7 @@ module.exports = {
       }
       if (preconditionsAreSatisfied) {
         let actionToApply;
-        domain.actions.forEach(function(action) {
+        domain.actions.forEach(action => {
           if (action.action === currentAction) {
             actionToApply = action;
           }

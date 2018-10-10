@@ -3,31 +3,23 @@ const R = require('ramda');
 
 const cloneObject = object => JSON.parse(JSON.stringify(object));
 
-let getApplicableActionInState = (state, action)  => {
-    let resolvedAction = null;
-    const populatedEffect = cloneObject(action.effect);
-    for (const m in action.effect) {
-        var effect = action.effect[m];
-        for (const n in effect.parameters) {
-            const parameter = effect.parameters[n];
+const getApplicableActionInState = (state, action) => {
+    // We map the effects to the new parameters
+    const newEffects = action.effect.map(({operation, parameters}) => {
+        const effectParameters = parameters.map((parameter) => {
             const value = action.map[parameter];
-
             if (value) {
-                // Assign this value to all instances of this parameter in the effect.
-                populatedEffect[m].parameters[n] = value;
+                return value;
+            } else {
+                throw new Error(`Value not found for parameter ${parameter}`)
             }
-            else {
-                console.log(`* ERROR: Value not found for parameter ${parameter}.`);
-            }
-        }
-    }
+        });
+        return { operation, parameters: effectParameters};
+    });
 
-    resolvedAction = cloneObject(action);
-    resolvedAction.effect = populatedEffect;
-    resolvedAction.map = action.map;
-    return resolvedAction;
-}
-
+    // Return the same action but with the newly calculated effect
+    return { ...action, effect: newEffects};
+};
 
 module.exports = {
   getNumberOfPreconditionsNotSatisfied: function (domain, mapping, chromosome, currentState) {
@@ -73,7 +65,6 @@ module.exports = {
     for (i = 0; i < chromosome.length ; i++) {
       let currentAction = chromosome[i][0];
       let currentParameters = chromosome[i][1];
-      // In javascript this is how you make a deep copy of an array with nested objects :( kill me
       let preconditions = cloneObject(mapping.actions[currentAction].precondition[0]);
 
       let actualParameters = [];

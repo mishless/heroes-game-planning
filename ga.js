@@ -4,12 +4,12 @@ let newRandomAction = function(mapping) {
   // generate new random action
   let randomActionKey = randomProperty(mapping.actions);
   let randomAction = mapping.actions[randomActionKey];
-  let randomParameterInstances = []
-  randomAction.parameters.forEach(function(parameterType) {
+  let randomParameterInstances = [];
+  for (parameter in randomAction.parameters) {
+    let parameterType = randomAction.parameters[parameter];
     let randomParameterInstanceKey = randomProperty(mapping.instances[parameterType]);
     randomParameterInstances.push(mapping.instances[parameterType][randomParameterInstanceKey]);
-  });
-
+  }
   return [randomActionKey, randomParameterInstances];
 };
 
@@ -41,7 +41,7 @@ module.exports = {
     domain.actions.forEach(function(action) {
       actions[action.action] = {'parameters': [], 'precondition': []};
       action.parameters.forEach(function(parameter) {
-         actions[action.action].parameters.push(parameter.type);
+         actions[action.action].parameters[parameter.parameter] = parameter.type;
       });
       actions[action.action].precondition.push(action.precondition);
     });
@@ -76,10 +76,11 @@ module.exports = {
           let randomActionKey = randomProperty(mapping.actions);
           let randomAction = mapping.actions[randomActionKey];
           let randomParameterInstances = []
-          randomAction.parameters.forEach(function(parameterType) {
+          for (parameter in randomAction.parameters) {
+            let parameterType = randomAction.parameters[parameter];
             let randomParameterInstanceKey = randomProperty(mapping.instances[parameterType]);
             randomParameterInstances.push(mapping.instances[parameterType][randomParameterInstanceKey]);
-          });
+          }
           newChromosome.push([randomActionKey, randomParameterInstances]);
         }
         population.push(newChromosome);

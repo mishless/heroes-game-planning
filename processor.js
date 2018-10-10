@@ -22,7 +22,9 @@ strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, 
     if (initialPopulation.length < 0) {
       console.log("Invalid grid generated - no valid first move.");
     }
-	 for (var i = 0; i < initialPopulation.length; i++){
-	     var num_conflicts = FF.getNumberOfConflicts(domain, mapping, initialPopulation[i], problem.states[0], strips.applyAction);
-	 }
+	 //for (var i = 0; i < initialPopulation.length; i++){
+   console.log( initialPopulation[0]);
+	     var num_conflicts = FF.getNumberOfPreconditionsNotSatisfied(domain, mapping, initialPopulation[0], problem.states[0]);
+       FF.getNumberOfInvalidActions(domain, mapping, initialPopulation[0], problem.states[0])
+	 //}
 });

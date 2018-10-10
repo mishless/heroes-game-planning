@@ -1,41 +1,28 @@
-const strips = require('strips');
-const mapGenerator = require('./map_generator');
-const fs = require('fs');
+var strips = require('strips');
+var mapGenerator = require('./map_generator')
+var GA = require('./ga')
+var FF = require('./fitness_function')
+var fs = require('fs');
 // Load the domain and problem.
 
-const a = [1, 2, 3, 4]
-const [b, c] = a;
-let problem = mapGenerator.generate(5, 6, 9, [1, 2]);
-fs.writeFile("./hero_problem.pddl", problem, err => {
+problem = mapGenerator.generate(9, 9, 0, [1, 1, 1, 1, 1]);
+fs.writeFile("./hero_problem.pddl", problem, function(err) {
     if(err) {
         return console.log(err);
     }
     console.log("The file was saved!");
 });
 
-strips.load('./hero_domain_final.pddl', './hero_problem.pddl', (domain, problem) => {
-    // Run the problem against the domain, using depth-first-search.
-    const solutions = strips.solve(domain, problem, cost);
-    // Display each solution.
-    for (let i in solutions) {
-        const solution = solutions[i];
-        console.log(`- Solution found in ${solution.steps} steps!`);
-        for (let j = 0; j < solution.path.length; j++) {
-            console.log(`${j + 1}. ${solution.path[j]}`);
-        }
+strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, problem) {
+    // Get encoding for GA
+    let mapping = GA.encode(domain, problem);
+    //console.log(mapping.actions['move'].precondition);
+    // Generate initial population
+    let initialPopulation = GA.generateIntialPopulation(domain, problem, strips.applicableActions, mapping, 10, 10);
+    if (initialPopulation.length < 0) {
+      console.log("Invalid grid generated - no valid first move.");
     }
+	 for (var i = 0; i < initialPopulation.length; i++){
+	     var num_conflicts = FF.getNumberOfConflicts(domain, mapping, initialPopulation[i], problem.states[0], strips.applyAction);
+	 }
 });
-
-function cost(state) {
-  let cost = 100;
-  for (let i in state.actions) {
-    const action = state.actions[i].action;
-
-    if (action === "has-castle") {
-      cost -= 20;
-    } else if (action.indexOf("has-") !== -1) {
-      cost -= 10;
-    }
-  }
-  return cost;
-}

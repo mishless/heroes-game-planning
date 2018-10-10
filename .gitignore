@@ -1,4 +1,3 @@
 node_modules/*
 // Files that are generated dynamically
-hero_domain_final.pddl
 hero_problem.pddl

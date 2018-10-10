@@ -1,3 +1,5 @@
+let config = require("./config.json");
+
 let newRandomAction = function(mapping) {
   // generate new random action
   let randomActionKey = randomProperty(mapping.actions);
@@ -12,13 +14,12 @@ let newRandomAction = function(mapping) {
 };
 
 let mutate = function(mapping, chromosome) {
-  var growthProb = 0.05;
-  var shrinkProb = 0.05;
-  var swapProb = 0.05;
-  var replaceProb = 0.05;
-  var paramProb = 0.05;
+  var growthProb = config.mutation_growth_prob;
+  var shrinkProb = config.mutation_shrink_prob;
+  var swapProb = config.mutation_swap_prob;
+  var replaceProb = config.mutation_replace_prob;
+  var paramProb = config.mutation_param_prob;
   // maybe add heuristic mutation?
-
   if (Math.random() <= growthProb) {
     // generate random index to add action to
     var index = Math.floor((Math.random() * chromosome.length));
@@ -125,5 +126,8 @@ module.exports = {
       population.push(newChromosome);
     }
     return population;
+  },
+  mutate: function(mapping, chromosome) {
+    mutate(mapping, chromosome);
   }
 };

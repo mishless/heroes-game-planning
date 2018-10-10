@@ -86,19 +86,18 @@ module.exports = {
       let preconditions = cloneObject(
         mapping.actions[currentAction].precondition[0]
       );
+      // actualParameters is an object which keys are [parameters] and value is the currentParameter by index
+      const actualParameters = Object.keys(mapping.actions[currentAction].parameters).reduce(
+          (acc, parameter, index) => ({ ...acc, [parameter]: currentParameters[index] })
+      , {});
 
-      let actualParameters = [];
-      let j = 0;
-      for (let parameter in mapping.actions[currentAction].parameters) {
-        actualParameters[parameter] = currentParameters[j++];
-      }
-
-      preconditions.forEach(precondition => {
-        precondition.parameters = precondition.parameters.map(
+      preconditions = preconditions.map(precondition => {
+        const parameters = precondition.parameters.map(
           (
-            parameter //console.log(parameter);
+            parameter
           ) => actualParameters[parameter]
         );
+        return {...precondition, parameters};
       });
       let preconditionsAreSatisfied = strips.isPreconditionSatisfied(
         currentState,

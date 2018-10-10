@@ -18,7 +18,7 @@ strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, 
     let mapping = GA.encode(domain, problem);
     // Generate initial population
     let initialPopulation = GA.generateIntialPopulation(mapping, 10, 10);
-	 // for (var i = 0; i < initialPopulation.length; i++){
-	 //     var num_conflicts = FF.number_of_conflicts(mapping, initialPopulation[i], problem.states[0]);
-	 // }
+	 for (var i = 0; i < initialPopulation.length; i++){
+	     var num_conflicts = FF.getNumberOfConflicts(mapping, initialPopulation[i], problem.states[0]);
+	 }
 });

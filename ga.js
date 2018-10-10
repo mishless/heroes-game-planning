@@ -26,10 +26,11 @@ module.exports = {
       instances[type] = [];
     });
     domain.actions.forEach(function(action) {
-      actions[action.action] = {'parameters': []};
+      actions[action.action] = {'parameters': [], 'precondition': []};
       action.parameters.forEach(function(parameter) {
          actions[action.action].parameters.push(parameter.type);
       });
+      actions[action.action].precondition.push(action.precondition);
     });
     for (type in domain.values) {
       instances[type] = [];

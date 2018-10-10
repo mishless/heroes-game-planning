@@ -5,7 +5,7 @@ var FF = require('./fitness_function')
 var fs = require('fs');
 // Load the domain and problem.
 
-problem = mapGenerator.generate(9, 9, 0, [1, 1, 1, 1, 1]);
+let problem = mapGenerator.generate(9, 9, 0, [1, 1, 1, 1, 1]);
 fs.writeFile("./hero_problem.pddl", problem, function(err) {
     if(err) {
         return console.log(err);

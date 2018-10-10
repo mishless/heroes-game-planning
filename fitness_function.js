@@ -24,7 +24,7 @@ const getApplicableActionInState = (state, action) => {
 module.exports = {
   getNumberOfPreconditionsNotSatisfied: function (domain, mapping, chromosome, currentState) {
   	let numberOfPreconditionsNotSatisfied = 0;
-  	for (i = 0; i < chromosome.length ; i++) {
+  	for (let i = 0; i < chromosome.length ; i++) {
   		let currentAction = chromosome[i][0];
   		let currentParameters = chromosome[i][1];
       // In javascript this is how you make a deep copy of an array with nested objects :( kill me
@@ -33,7 +33,7 @@ module.exports = {
 
       let actualParameters = [];
       let j = 0;
-      for (parameter in mapping.actions[currentAction].parameters) {
+      for (let parameter in mapping.actions[currentAction].parameters) {
         actualParameters[parameter] = currentParameters[j++];
       }
 
@@ -62,14 +62,14 @@ module.exports = {
   },
   getNumberOfInvalidActions(domain, mapping, chromosome, currentState) {
     let numberOfInvalidActions = 0;
-    for (i = 0; i < chromosome.length ; i++) {
+    for (let i = 0; i < chromosome.length ; i++) {
       let currentAction = chromosome[i][0];
       let currentParameters = chromosome[i][1];
       let preconditions = cloneObject(mapping.actions[currentAction].precondition[0]);
 
       let actualParameters = [];
       let j = 0;
-      for (parameter in mapping.actions[currentAction].parameters) {
+      for (let parameter in mapping.actions[currentAction].parameters) {
         actualParameters[parameter] = currentParameters[j++];
       }
 

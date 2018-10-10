@@ -18,7 +18,7 @@ let getGeneValidActionFromState = function(domain, state, getValidActions) {
   if (validActions.length > 0) {
     let randomValidAction = Math.floor((Math.random() * validActions.length));
     let randomValidActionParameters = [];
-    for (parameter in validActions[randomValidAction].map) {
+    for (let parameter in validActions[randomValidAction].map) {
       randomValidActionParameters.push(validActions[randomValidAction].map[parameter]);
     }
     return [validActions[randomValidAction].action, randomValidActionParameters];
@@ -33,8 +33,8 @@ let randomProperty = function(obj) {
 
 module.exports = {
   encode: function(domain, problem) {
-    actions = {};
-    instances = {};
+    let actions = {};
+    let instances = {};
     domain.types.forEach(type => {
       instances[type] = [];
     });
@@ -45,7 +45,7 @@ module.exports = {
       });
       actions[action.action].precondition.push(action.precondition);
     });
-    for (type in domain.values) {
+    for (let type in domain.values) {
       instances[type] = [];
       domain.values[type].forEach(object => {
         instances[type].push(object);
@@ -76,7 +76,7 @@ module.exports = {
           let randomActionKey = randomProperty(mapping.actions);
           let randomAction = mapping.actions[randomActionKey];
           let randomParameterInstances = []
-          for (parameter in randomAction.parameters) {
+          for (let parameter in randomAction.parameters) {
             let parameterType = randomAction.parameters[parameter];
             let randomParameterInstanceKey = randomProperty(mapping.instances[parameterType]);
             randomParameterInstances.push(mapping.instances[parameterType][randomParameterInstanceKey]);

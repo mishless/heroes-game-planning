@@ -204,15 +204,21 @@ module.exports = {
                 preconditions
             );
             if (!preconditionsAreSatisfied) {
-      				return sizeBeforeConflict;
+      		return sizeBeforeConflict;
             } else {
-      				sizeBeforeConflict++;
-      			}
+		sizeBeforeConflict++;
+		state = updateCurrentState({
+			domainActions: domain.actions,
+			currentAction,
+			actualParameters,
+			currentState: state,
+		    });
 		}
-		return sizeBeforeConflict;
+	    }
+	    return sizeBeforeConflict;
 	},
     getChromosozeSize(chromosome) {
-		return chromosome.length;
+            return chromosome.length;
 	},
   getBestSequenceSize(domain, mapping, chromosome, currentState) {
       var state = cloneObject(currentState);
@@ -240,11 +246,17 @@ module.exports = {
       		    sequenceSize.push(sizeUntillConflict);
 			        sizeUntillConflict = 0;
           }
-    			else {
-    				sizeUntillConflict++;
-    			}
+    	  else {
+		sizeUntillConflict++;
+		state = updateCurrentState({
+			domainActions: domain.actions,
+			currentAction,
+			actualParameters,
+			currentState: state,
+		    });
+		}
 	    }
-		  return Math.max(...sequenceSize);
+	    return Math.max(...sequenceSize);
 	},
   getCountCollisionsAtTheEnd(domain, mapping, chromosome, currentState, goalState) {
     let state = cloneObject(currentState);

@@ -6,7 +6,7 @@ const fs = require("fs");
 const config = require("./config.json");
 // Load the domain and problem.
 
-const PROBLEM = mapGenerator.generate(5, 5, 0, [1, 1, 1, 1, 1]);
+const PROBLEM = mapGenerator.generate(3, 3, 0, [1]);
 
 fs.writeFile("./hero_problem.pddl", PROBLEM, err => {
   if (err) {
@@ -16,7 +16,7 @@ fs.writeFile("./hero_problem.pddl", PROBLEM, err => {
 });
 
 strips.load(
-  "./hero_domain_final.pddl",
+  "./hero_domain_easy.pddl",
   "./hero_problem.pddl",
   (domain, problem) => {
     // Get encoding for GA

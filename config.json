@@ -9,7 +9,7 @@
   "elitist_prob": 0.8,
   "tournament_size": 5,
   "population_size": 100,
-  "chromosome_size": 50,
+  "chromosome_size": 15,
   "conflict_preconditions_pound": 0.05,
   "conflict_actions_pound": 0.01,
   "first_conflict_position_pound": -0.02,

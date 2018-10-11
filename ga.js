@@ -246,5 +246,17 @@ module.exports = {
       }
     }
     return newPopulation;
+  },
+  getTheFittest: function(currentPopulation, domain, mapping, initialState, goalState) {
+    let bestFitness = Infinity;
+    let individual;
+    for (var i = 0; i<currentPopulation.length; i++) {
+      let currentFitness = getFitness(currentPopulation[i], domain, mapping, initialState, goalState);
+      if (bestFitness > currentFitness) {
+        bestFitness = currentFitness;
+        individual = currentPopulation[i];
+      }
+    }
+    return {individual, bestFitness};
   }
 };

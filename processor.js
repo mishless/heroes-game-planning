@@ -6,7 +6,7 @@ const fs = require("fs");
 const config = require("./config.json");
 // Load the domain and problem.
 
-const PROBLEM = mapGenerator.generate(9, 9, 0, [1, 1, 1, 1, 1]);
+const PROBLEM = mapGenerator.generate(5, 5, 0, [1, 1, 1, 1, 1]);
 
 fs.writeFile("./hero_problem.pddl", PROBLEM, err => {
   if (err) {
@@ -42,6 +42,8 @@ strips.load(
     for (let i=0; i<config.generations; i++) {
       console.log("Generation " + i);
       initialPopulation = GA.generateNewPopulation(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
+      let test = GA.getTheFittest(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
+      console.log(test);
     }
   }
 );

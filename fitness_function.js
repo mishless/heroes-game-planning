@@ -99,7 +99,7 @@ module.exports = {
         let state = cloneObject(currentState);
         let numberOfPreconditionsNotSatisfied = 0;
         for (let i = 0; i < chromosome.length; i++) {
-            console.log(chromosome[i]);
+            //console.log(chromosome[i]);
             let currentAction = chromosome[i][0];
             let currentParameters = chromosome[i][1];
 

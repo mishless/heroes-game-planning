@@ -1,6 +1,9 @@
 let config = require("./config.json");
 let fitnessFunction = require('./fitness_function.js');
 
+// This is how you deep clone in JavaScript :D
+const cloneObject = object => JSON.parse(JSON.stringify(object));
+
 let newRandomAction = function(mapping) {
   // generate new random action
   let randomActionKey = randomProperty(mapping.actions);
@@ -47,15 +50,16 @@ let select = function(population, domain, mapping, initialState, goalState) {
 
   let bestIndividual =
     population[Math.floor(Math.random() * population.length)];
-  const bestFitness = getFitness(bestIndividual, domain, mapping, initialState, goalState);
+  let bestFitness = getFitness(bestIndividual, domain, mapping, initialState, goalState);
 
   for (let i = 0; i < N; i++) {
     const individual =
       population[Math.floor(Math.random() * population.length)];
     const fitness = getFitness(individual, domain, mapping, initialState, goalState);
 
-    if (fitness > bestFitness) {
+    if (fitness < bestFitness) {
       bestIndividual = individual;
+      bestFitness = fitness;
     }
   }
   return bestIndividual;
@@ -104,9 +108,6 @@ let mutate = function(mapping, chromosome) {
     // generate random index to mutate
     const actionIndex = Math.floor(Math.random() * chromosome.length);
     // get parameters of action
-    if (actionIndex === 0) {
-      console.log(chromosome);
-    }
     const parameterInstances = chromosome[actionIndex][1];
     // generate random index of parameter
     const action = chromosome[actionIndex][0];
@@ -124,17 +125,15 @@ let mutate = function(mapping, chromosome) {
 };
 
 let crossover = function(chromosome_1, chromosome_2) {
+  let copyOfFirstChromosome = cloneObject(chromosome_1);
+  let copyOfSecondChromosome = cloneObject(chromosome_2);
   // currently does crossover randomly, not from an invalid move
-  const idx_1 = Math.floor(Math.random() * chromosome_1.length);
-  const idx_2 = Math.floor(Math.random() * chromosome_2.length);
-
-  const newChromosome_1 = chromosome_1
-    .splice(idx_1, chromosome_1.length)
-    .concat(chromosome_2.splice(0, idx_2));
-  const newChromosome_2 = chromosome_2
-    .splice(idx_2, chromosome_2.length)
-    .concat(chromosome_1.splice(0, idx_1));
-
+  let shorterLength = copyOfFirstChromosome.length < copyOfSecondChromosome.length ? copyOfFirstChromosome.length : copyOfSecondChromosome.length;
+  const index = Math.floor(Math.random() * shorterLength);
+  const lastPartChromosome1 = copyOfFirstChromosome.splice(index);
+  const lastPartChromosome2 = copyOfSecondChromosome.splice(index);
+  const newChromosome_1 = copyOfFirstChromosome.concat(lastPartChromosome2);
+  const newChromosome_2 = copyOfSecondChromosome.concat(lastPartChromosome1);
   return [newChromosome_1, newChromosome_2];
 };
 

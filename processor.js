@@ -34,6 +34,11 @@ strips.load(
     if (initialPopulation.length < 0) {
       console.log("Invalid grid generated - no valid first move.");
     }
+    for (var i=0; i<initialPopulation.length; i++) {
+      if (initialPopulation[i].length !== config.chromosome_size) {
+        console.log("ERROR");
+      }
+    }
     for (let i=0; i<config.generations; i++) {
       console.log("Generation " + i);
       initialPopulation = GA.generateNewPopulation(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);

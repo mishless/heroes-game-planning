@@ -64,29 +64,29 @@ const getActualParameters = (parameters, currentParameters) => Object.keys(param
         [parameter]: currentParameters[index]
     }), {});
 
-const getApplicableActionInState = (state, action) => {
-    // We map the effects to the new parameters
-    const newEffects = action.effect.map(({
-                                              operation,
-                                              parameters
-                                          }) => {
-        const effectParameters = parameters.map(parameter => {
+const getApplicableActionInState = function(state, action) {
+    let resolvedAction;
+    const populatedEffect = JSON.parse(JSON.stringify(action.effect));
+    for (const m in action.effect) {
+        var effect = action.effect[m];
+        for (const n in effect.parameters) {
+            const parameter = effect.parameters[n];
             const value = action.map[parameter];
+
             if (value) {
-                return value;
-            } else {
-                throw new Error(`Value not found for parameter ${parameter}`);
+                // Assign this value to all instances of this parameter in the effect.
+                populatedEffect[m].parameters[n] = value;
             }
-        });
-        return {
-            operation,
-            parameters: effectParameters
-        };
-    });
-    // Return the same action but with the newly calculated effect
-    return { ...action,
-        effect: newEffects
-    };
+            else {
+                console.log(`* ERROR: Value not found for parameter ${parameter}.`);
+            }
+        }
+    }
+
+    resolvedAction = JSON.parse(JSON.stringify(action));
+    resolvedAction.effect = populatedEffect;
+    resolvedAction.map = action.map;
+    return resolvedAction;
 };
 
 module.exports = {

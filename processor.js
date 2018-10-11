@@ -19,10 +19,10 @@ strips.load(
   "./hero_problem.pddl",
   (domain, problem) => {
     // Get encoding for GA
-    let mapping = GA.encode(domain, problem);
+    var mapping = GA.encode(domain, problem);
     //console.log(mapping.actions['move'].precondition);
     // Generate initial population
-    let initialPopulation = GA.generateIntialPopulation(
+    var initialPopulation = GA.generateIntialPopulation(
       domain,
       problem,
       strips.applicableActions,
@@ -47,6 +47,19 @@ strips.load(
       initialPopulation[0],
       problem.states[0]
     );
+    FF.getSizeBeforeConflict(
+      domain,
+      mapping,
+      initialPopulation[0],
+      problem.states[0]
+    );
+    FF.getBestSequenceSize(
+      domain,
+      mapping,
+      initialPopulation[0],
+      problem.states[0]
+    );
+
     //}
   }
 );

@@ -152,7 +152,81 @@ module.exports = {
         console.log(numberOfInvalidActions);
         return numberOfInvalidActions;
     },
-    getSizeBeforeConflict(chromosome) {},
-    getChromosozeSize(chromosome) {},
-    getBestSequenceSize(chromosome) {}
+    getSizeBeforeConflict(domain, mapping, chromosome, currentState) {
+        var state = cloneObject(currentState);
+        var sizeBeforeConflict = 0;
+        for (var i = 0; i < chromosome.length; i++) {
+            var currentAction = chromosome[i][0];
+            var currentParameters = chromosome[i][1];
+
+            const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+
+            const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+                const parameters = precondition.parameters.map(
+                    (
+                        parameter
+                    ) => actualParameters[parameter]
+                );
+                return { ...precondition,
+                    parameters
+                };
+            });
+
+            const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                state,
+                preconditions
+            );
+            //console.log(preconditions);
+            if (!preconditionsAreSatisfied) {
+				console.log(sizeBeforeConflict);
+                return sizeBeforeConflict;
+            }
+			else {
+				sizeBeforeConflict++;
+			}
+		}
+		return sizeBeforeConflict;
+	},
+    getChromosozeSize(chromosome) {
+		return chromosome.length;
+	},
+    getBestSequenceSize(domain, mapping, chromosome, currentState) {
+        var state = cloneObject(currentState);
+        var sizeUntillConflict = 0;
+        var sequenceSize = [];
+
+        for (var i = 0; i < chromosome.length; i++) {
+            var currentAction = chromosome[i][0];
+            var currentParameters = chromosome[i][1];
+
+            const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+
+            const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+                const parameters = precondition.parameters.map(
+                    (
+                        parameter
+                    ) => actualParameters[parameter]
+                );
+                return { ...precondition,
+                    parameters
+                };
+            });
+
+            const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                state,
+                preconditions
+            );
+            //console.log(preconditions);
+            if (!preconditionsAreSatisfied) {
+        		sequenceSize.push(sizeUntillConflict);
+				sizeUntillConflict = 0;
+            }
+			else {
+				sizeUntillConflict++;
+			}
+		}
+		console.log(sequenceSize);
+		console.log(Math.max(...sequenceSize));
+		return Math.max(...sequenceSize);
+	}
 };

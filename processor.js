@@ -59,6 +59,7 @@ strips.load(
       initialPopulation[0],
       problem.states[0]
     );
+    FF.getCountCollisions(domain, mapping, initialPopulation[0], problem.states[0], problem.states[1]);
 
     //}
   }

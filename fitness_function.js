@@ -4,6 +4,34 @@ const R = require("ramda");
 // This is how you deep clone in JavaScript :D
 const cloneObject = object => JSON.parse(JSON.stringify(object));
 
+let getGoalPreconditions = function(state, goalState) {
+    // Returns true if the state contains the goal conditions.
+    let goalPreconditions = 0;
+    for (var i in goalState.actions) {
+        var goalAction = goalState.actions[i];
+        var operation = goalAction.operation || 'and';
+        if (operation == 'and') {
+            // Make sure this action exists in the state.
+            for (var j in state.actions) {
+                if (StripsManager.isEqual(state.actions[j], goalAction)) {
+                    goalPreconditions++;
+                    break;
+                }
+            }
+        } else {
+            // Make sure this action does not exist in the state.
+            for (var j in state.actions) {
+                if (StripsManager.isEqual(state.actions[j], goalAction)) {
+                    // This is our target, so it fails the goal test.
+                    goalPreconditions++;
+                    break;
+                }
+            }
+        }
+    }
+    return goalPreconditions;
+};
+
 // it gets the action to apply calculate it with the state and return STRIP apply action
 const updateCurrentState = ({
     domainActions,
@@ -163,9 +191,7 @@ module.exports = {
 
             const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
                 const parameters = precondition.parameters.map(
-                    (
-                        parameter
-                    ) => actualParameters[parameter]
+                    (parameter) => actualParameters[parameter]
                 );
                 return { ...precondition,
                     parameters
@@ -176,57 +202,80 @@ module.exports = {
                 state,
                 preconditions
             );
-            //console.log(preconditions);
             if (!preconditionsAreSatisfied) {
-				console.log(sizeBeforeConflict);
-                return sizeBeforeConflict;
-            }
-			else {
-				sizeBeforeConflict++;
-			}
+      				return sizeBeforeConflict;
+            } else {
+      				sizeBeforeConflict++;
+      			}
 		}
 		return sizeBeforeConflict;
 	},
     getChromosozeSize(chromosome) {
 		return chromosome.length;
 	},
-    getBestSequenceSize(domain, mapping, chromosome, currentState) {
-        var state = cloneObject(currentState);
-        var sizeUntillConflict = 0;
-        var sequenceSize = [];
+  getBestSequenceSize(domain, mapping, chromosome, currentState) {
+      var state = cloneObject(currentState);
+      var sizeUntillConflict = 0;
+      var sequenceSize = [];
 
-        for (var i = 0; i < chromosome.length; i++) {
-            var currentAction = chromosome[i][0];
-            var currentParameters = chromosome[i][1];
+      for (var i = 0; i < chromosome.length; i++) {
+          var currentAction = chromosome[i][0];
+          var currentParameters = chromosome[i][1];
+          const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+          const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+              const parameters = precondition.parameters.map(
+                  (parameter) => actualParameters[parameter]
+              );
+              return { ...precondition,
+                  parameters
+              };
+          });
 
-            const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
-
-            const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
-                const parameters = precondition.parameters.map(
-                    (
-                        parameter
-                    ) => actualParameters[parameter]
-                );
-                return { ...precondition,
-                    parameters
-                };
-            });
-
-            const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
-                state,
-                preconditions
+          const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+              state,
+              preconditions
+          );
+          if (!preconditionsAreSatisfied) {
+      		    sequenceSize.push(sizeUntillConflict);
+			        sizeUntillConflict = 0;
+          }
+    			else {
+    				sizeUntillConflict++;
+    			}
+	    }
+		  return Math.max(...sequenceSize);
+	},
+  getCountCollisions(domain, mapping, chromosome, currentState, goalState) {
+    let state = cloneObject(currentState);
+    for (let i = 0; i < chromosome.length; i++) {
+        let currentAction = chromosome[i][0];
+        let currentParameters = chromosome[i][1];
+        const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+        const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+            const parameters = precondition.parameters.map(
+                (parameter) => actualParameters[parameter]
             );
-            //console.log(preconditions);
-            if (!preconditionsAreSatisfied) {
-        		sequenceSize.push(sizeUntillConflict);
-				sizeUntillConflict = 0;
-            }
-			else {
-				sizeUntillConflict++;
-			}
-		}
-		console.log(sequenceSize);
-		console.log(Math.max(...sequenceSize));
-		return Math.max(...sequenceSize);
-	}
+            return { ...precondition,
+                parameters
+            };
+        });
+
+        const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+            state,
+            preconditions
+        );
+        if (!preconditionsAreSatisfied) {
+            // Here we can add logic what to do when the preconditions are not met
+        }
+        if (preconditionsAreSatisfied) {
+            state = updateCurrentState({
+                domainActions: domain.actions,
+                currentAction,
+                actualParameters,
+                currentState: state,
+            });
+        }
+    }
+    return getGoalPreconditions(state, goalState);
+  }
 };

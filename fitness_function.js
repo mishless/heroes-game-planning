@@ -99,6 +99,7 @@ module.exports = {
         let state = cloneObject(currentState);
         let numberOfPreconditionsNotSatisfied = 0;
         for (let i = 0; i < chromosome.length; i++) {
+            console.log(chromosome[i]);
             let currentAction = chromosome[i][0];
             let currentParameters = chromosome[i][1];
 
@@ -137,7 +138,7 @@ module.exports = {
                 });
             }
         }
-        console.log(numberOfPreconditionsNotSatisfied);
+        //console.log(numberOfPreconditionsNotSatisfied);
         return numberOfPreconditionsNotSatisfied;
     },
     getNumberOfInvalidActions(domain, mapping, chromosome, currentState) {
@@ -177,7 +178,7 @@ module.exports = {
                 });
             }
         }
-        console.log(numberOfInvalidActions);
+        //console.log(numberOfInvalidActions);
         return numberOfInvalidActions;
     },
     getSizeBeforeConflict(domain, mapping, chromosome, currentState) {
@@ -245,7 +246,7 @@ module.exports = {
 	    }
 		  return Math.max(...sequenceSize);
 	},
-  getCountCollisions(domain, mapping, chromosome, currentState, goalState) {
+  getCountCollisionsAtTheEnd(domain, mapping, chromosome, currentState, goalState) {
     let state = cloneObject(currentState);
     for (let i = 0; i < chromosome.length; i++) {
         let currentAction = chromosome[i][0];

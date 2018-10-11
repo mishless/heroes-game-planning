@@ -1,11 +1,12 @@
 let config = require("./config.json");
+let fitnessFunction = require('./fitness_function.js');
 
 let newRandomAction = function(mapping) {
   // generate new random action
   let randomActionKey = randomProperty(mapping.actions);
   let randomAction = mapping.actions[randomActionKey];
   let randomParameterInstances = [];
-  for (parameter in randomAction.parameters) {
+  for (let parameter in randomAction.parameters) {
     let parameterType = randomAction.parameters[parameter];
     let randomParameterInstanceKey = randomProperty(
       mapping.instances[parameterType]
@@ -38,6 +39,119 @@ let getGeneValidActionFromState = function(domain, state, getValidActions) {
 let randomProperty = function(obj) {
   const keys = Object.keys(obj);
   return keys[(keys.length * Math.random()) << 0];
+};
+
+let select = function(population, domain, mapping, initialState, goalState) {
+  // select the best individual in a tournament of size N
+  const N = config.tournament_size;
+
+  let bestIndividual =
+    population[Math.floor(Math.random() * population.length)];
+  const bestFitness = getFitness(bestIndividual, domain, mapping, initialState, goalState);
+
+  for (let i = 0; i < N; i++) {
+    const individual =
+      population[Math.floor(Math.random() * population.length)];
+    const fitness = getFitness(individual, domain, mapping, initialState, goalState);
+
+    if (fitness > bestFitness) {
+      bestIndividual = individual;
+    }
+  }
+  return bestIndividual;
+};
+
+let mutate = function(mapping, chromosome) {
+  const growthProb = config.mutation_growth_prob;
+  const shrinkProb = config.mutation_shrink_prob;
+  const swapProb = config.mutation_swap_prob;
+  const replaceProb = config.mutation_replace_prob;
+  const paramProb = config.mutation_param_prob;
+  // maybe add heuristic mutation?
+  if (Math.random() <= growthProb) {
+    // generate random index to add action to
+    var index = Math.floor(Math.random() * chromosome.length);
+    // insert the random action into the chromosome
+    chromosome.splice(index, 0, newRandomAction(mapping));
+  }
+
+  if (Math.random() <= shrinkProb) {
+    // generate random index to remove action from
+    var index = Math.floor(Math.random() * chromosome.length);
+    // remove action at specified index
+    chromosome.splice(index, 1);
+  }
+
+  if (Math.random() <= swapProb) {
+    // generate random indices to swap
+    const index_1 = Math.floor(Math.random() * chromosome.length);
+    const index_2 = Math.floor(Math.random() * chromosome.length);
+    // swap the actions
+    const action_1 = chromosome[index_1];
+    const action_2 = chromosome[index_2];
+    chromosome[index_1] = action_2;
+    chromosome[index_2] = action_1;
+  }
+
+  if (Math.random() <= replaceProb) {
+    // generate random index to replace
+    var index = Math.floor(Math.random() * chromosome.length);
+    // replace the action at index with new random action
+    chromosome[index] = newRandomAction(mapping);
+  }
+
+  if (Math.random() <= paramProb) {
+    // generate random index to mutate
+    const actionIndex = Math.floor(Math.random() * chromosome.length);
+    // get parameters of action
+    if (actionIndex === 0) {
+      console.log(chromosome);
+    }
+    const parameterInstances = chromosome[actionIndex][1];
+    // generate random index of parameter
+    const action = chromosome[actionIndex][0];
+    const randomParameter = Math.floor(Math.random() * parameterInstances.length);
+    // get a new property of the same type
+    const positionalArgument =  Object.keys(mapping.actions[action].parameters)[randomParameter];
+    const paramType = mapping.actions[action].parameters[positionalArgument];
+
+    const randomInstance = Math.floor(Math.random() * mapping.instances[paramType].length);
+    const newInstance = mapping.instances[paramType][randomInstance];
+    // replace the old property with the new property
+    chromosome[actionIndex][1][randomParameter] = newInstance;
+  }
+  return chromosome;
+};
+
+let crossover = function(chromosome_1, chromosome_2) {
+  // currently does crossover randomly, not from an invalid move
+  const idx_1 = Math.floor(Math.random() * chromosome_1.length);
+  const idx_2 = Math.floor(Math.random() * chromosome_2.length);
+
+  const newChromosome_1 = chromosome_1
+    .splice(idx_1, chromosome_1.length)
+    .concat(chromosome_2.splice(0, idx_2));
+  const newChromosome_2 = chromosome_2
+    .splice(idx_2, chromosome_2.length)
+    .concat(chromosome_1.splice(0, idx_1));
+
+  return [newChromosome_1, newChromosome_2];
+};
+
+let getFitness = function(chromosome, domain, mapping, initialState, goalState) {
+  let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
+  let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
+  let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+  let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
+  let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
+  let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+  return config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
+         config.conflict_actions_pound * numberOfInvalidActions +
+         config.first_conflict_position_pound * sizeBeforeConflict +
+         config.chrom_size_pound * chromosomeSize +
+         config.best_subseq_pound * getBestSequenceSize +
+         config.collision_final_action_pound * collisionsAtEnd;
+
 };
 
 module.exports = {
@@ -112,123 +226,26 @@ module.exports = {
     }
     return population;
   },
-
-  mutate: function(mapping, chromosome) {
-    const growthProb = config.mutation_growth_prob;
-    const shrinkProb = config.mutation_shrink_prob;
-    const swapProb = config.mutation_swap_prob;
-    const replaceProb = config.mutation_replace_prob;
-    const paramProb = config.mutation_param_prob;
-    // maybe add heuristic mutation?
-    if (Math.random() <= growthProb) {
-      // generate random index to add action to
-      var index = Math.floor(Math.random() * chromosome.length);
-      // insert the random action into the chromosome
-      chromosome.splice(index, 0, newRandomAction(mapping));
-    }
-
-    if (Math.random() <= shrinkProb) {
-      // generate random index to remove action from
-      var index = Math.floor(Math.random() * chromosome.length);
-      // remove action at specified index
-      chromosome.splice(index, 1);
-    }
-
-    if (Math.random() <= swapProb) {
-      // generate random indices to swap
-      const index_1 = Math.floor(Math.random() * chromosome.length);
-      const index_2 = Math.floor(Math.random() * chromosome.length);
-      // swap the actions
-      const action_1 = chromosome[index_1];
-      const action_2 = chromosome[index_2];
-      chromosome[index_1] = action_2;
-      chromosome[index_2] = action_1;
-    }
-
-    if (Math.random() <= replaceProb) {
-      // generate random index to replace
-      var index = Math.floor(Math.random() * chromosome.length);
-      // replace the action at index with new random action
-      chromosome[index] = newRandomAction(mapping);
-    }
-
-    if (Math.random() <= paramProb) {
-      // generate random index to mutate
-      const actionIndex = Math.floor(Math.random() * chromosome.length);
-      // get parameters of action
-      const parameterInstances = chromosome[index][1];
-      // generate random index of parameter
-      const paramIndex = Math.floor(Math.random() * parameterInstances.length);
-      // get a new property of the same type
-      const paramType = mapping[chromosome[index][0]].parameters[paramIndex];
-      const newProperty = randomProperty(mapping.instances[paramType]);
-      // replace the old property with the new property
-      chromosome[index][1][paramIndex] = newProperty;
-    }
-
-    return chromosome;
-  },
-
-  crossover: function(chromosome_1, chromosome_2) {
-    // currently does crossover randomly, not from an invalid move
-    const idx_1 = Math.floor(Math.random() * chromosome_1.length);
-    const idx_2 = Math.floor(Math.random() * chromosome_2.length);
-
-    const newChromosome_1 = chromosome_1
-      .splice(idx_1, chromosome_1.length)
-      .concat(chromosome_2.splice(0, idx_2));
-    const newChromosome_2 = chromosome_2
-      .splice(idx_2, chromosome_2.length)
-      .concat(chromosome_1.splice(0, idx_1));
-
-    return [newChromosome_1, newChromosome_2];
-  },
-
-  select: function(population) {
-    // select the best individual in a tournament of size N
-    const N = config.tournament_size;
-
-    let bestIndividual =
-      population[Math.floor(Math.random() * population.length)];
-    const bestFitness = getFitness(bestIndividual);
-
-    for (let i = 0; i < N; i++) {
-      const individual =
-        population[Math.floor(Math.random() * population.length)];
-      const fitness = getFitness(individual);
-
-      if (fitness > bestFitness) {
-        bestIndividual = individual;
-      }
-    }
-    return bestIndividual;
-  },
-
-  generateNewPopulation: function(currentPopulation) {
+  generateNewPopulation: function(currentPopulation, domain, mapping, initialState, goalState) {
     const newPopulation = [];
     const populationSize = config.population_size;
 
     for (let i = 0; i < populationSize / 2; i++) {
-      const individual_1 = select(currentPopulation);
-      const individual_2 = select(currentPopulation);
+      const individual_1 = select(currentPopulation, domain, mapping, initialState, goalState);
+      const individual_2 = select(currentPopulation, domain, mapping, initialState, goalState);
 
       if (Math.random() > config.crossover_prob) {
         const children = crossover(individual_1, individual_2);
-        const child_1 = mutate(children[0]);
-        const child_2 = mutate(children[1]);
+        const child_1 = mutate(mapping, children[0]);
+        const child_2 = mutate(mapping, children[1]);
 
         newPopulation.push(child_1);
         newPopulation.push(child_2);
       } else {
-        newPopulation.push(mutate(individual_1));
-        newPopulation.push(mutate(individual_2));
+        newPopulation.push(mutate(mapping, individual_1));
+        newPopulation.push(mutate(mapping, individual_2));
       }
     }
     return newPopulation;
-  },
-
-  getFitness: function(chromosome) {
-    // placeholder
-    return Math.random();
   }
 };

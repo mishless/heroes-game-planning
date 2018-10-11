@@ -3,6 +3,7 @@ const mapGenerator = require("./map_generator");
 const GA = require("./ga");
 const FF = require("./fitness_function");
 const fs = require("fs");
+const config = require("./config.json");
 // Load the domain and problem.
 
 const PROBLEM = mapGenerator.generate(9, 9, 0, [1, 1, 1, 1, 1]);
@@ -27,40 +28,15 @@ strips.load(
       problem,
       strips.applicableActions,
       mapping,
-      10,
-      10
+      config.chromosome_size,
+      config.population_size
     );
     if (initialPopulation.length < 0) {
       console.log("Invalid grid generated - no valid first move.");
     }
-    //for (var i = 0; i < initialPopulation.length; i++){
-    console.log(initialPopulation[0]);
-    const num_conflicts = FF.getNumberOfPreconditionsNotSatisfied(
-      domain,
-      mapping,
-      initialPopulation[0],
-      problem.states[0]
-    );
-    FF.getNumberOfInvalidActions(
-      domain,
-      mapping,
-      initialPopulation[0],
-      problem.states[0]
-    );
-    FF.getSizeBeforeConflict(
-      domain,
-      mapping,
-      initialPopulation[0],
-      problem.states[0]
-    );
-    FF.getBestSequenceSize(
-      domain,
-      mapping,
-      initialPopulation[0],
-      problem.states[0]
-    );
-    FF.getCountCollisions(domain, mapping, initialPopulation[0], problem.states[0], problem.states[1]);
-
-    //}
+    for (let i=0; i<config.generations; i++) {
+      console.log("Generation " + i);
+      initialPopulation = GA.generateNewPopulation(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
+    }
   }
 );

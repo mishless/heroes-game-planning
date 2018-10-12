@@ -279,7 +279,8 @@ module.exports = {
         var parent_2_fitness = getFitness(individual_2, domain, mapping, initialState, goalState);
 
         if (child_1_fitness > parent_1_fitness && 
-            child_1_fitness > parent_2_fitness) {
+            child_1_fitness > parent_2_fitness &&
+            Math.random() < config.elitist_prob) {
           newPopulation.push(child_1);
         } else {
           // the child was worse than both parents so add the better parent
@@ -291,7 +292,8 @@ module.exports = {
         }
 
         if (child_2_fitness > parent_1_fitness && 
-            child_2_fitness > parent_2_fitness) {
+            child_2_fitness > parent_2_fitness &&
+            Math.random() < config.elitist_prob) {
           newPopulation.push(child_2);
         } else {
           // the child was worse than both parents so add the better parent

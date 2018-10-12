@@ -250,8 +250,35 @@ module.exports = {
         const child_1 = mutate(mapping, children[0]);
         const child_2 = mutate(mapping, children[1]);
 
-        newPopulation.push(child_1);
-        newPopulation.push(child_2);
+        var child_1_fitness = getFitness(child_1, domain, mapping, initialState, goalState);
+        var child_2_fitness = getFitness(child_2, domain, mapping, initialState, goalState);
+        var parent_1_fitness = getFitness(individual_1, domain, mapping, initialState, goalState);
+        var parent_2_fitness = getFitness(individual_2, domain, mapping, initialState, goalState);
+
+        if (child_1_fitness > parent_1_fitness && 
+            child_1_fitness > parent_2_fitness) {
+          newPopulation.push(child_1);
+        } else {
+          // the child was worse than both parents so add the better parent
+          if (parent_1_fitness > parent_2_fitness) {
+            newPopulation.push(individual_1);
+          } else {
+            newPopulation.push(individual_2);
+          }
+        }
+
+        if (child_2_fitness > parent_1_fitness && 
+            child_2_fitness > parent_2_fitness) {
+          newPopulation.push(child_2);
+        } else {
+          // the child was worse than both parents so add the better parent
+          if (parent_1_fitness > parent_2_fitness) {
+            newPopulation.push(individual_1);
+          } else {
+            newPopulation.push(individual_2);
+          }
+        }
+
       } else {
         newPopulation.push(mutate(mapping, individual_1));
         newPopulation.push(mutate(mapping, individual_2));

@@ -128,16 +128,24 @@ let mutate = function(mapping, chromosome) {
   return chromosome;
 };
 
-let crossover = function(chromosome_1, chromosome_2) {
+let crossover = function(chromosome_1, chromosome_2, domain, mapping, initialState) {
   let copyOfFirstChromosome = cloneObject(chromosome_1);
   let copyOfSecondChromosome = cloneObject(chromosome_2);
-  // currently does crossover randomly, not from an invalid move
-  let shorterLength = copyOfFirstChromosome.length < copyOfSecondChromosome.length ? copyOfFirstChromosome.length : copyOfSecondChromosome.length;
-  const index = Math.floor(Math.random() * shorterLength);
+
+  let shorterChromosome = copyOfFirstChromosome.length < copyOfSecondChromosome.length ? copyOfFirstChromosome : copyOfSecondChromosome;
+  var index = 0;
+
+  if (Math.random() < config.crossover_from_conflict_prob) {
+    index = fitnessFunction.getSizeBeforeConflict(domain, mapping, shorterChromosome, initialState) - 1;
+  } else {
+    index = Math.floor(Math.random() * shorterChromosome.length);
+  }
+
   const lastPartChromosome1 = copyOfFirstChromosome.splice(index);
   const lastPartChromosome2 = copyOfSecondChromosome.splice(index);
   const newChromosome_1 = copyOfFirstChromosome.concat(lastPartChromosome2);
   const newChromosome_2 = copyOfSecondChromosome.concat(lastPartChromosome1);
+  
   return [newChromosome_1, newChromosome_2];
 };
 
@@ -265,39 +273,45 @@ module.exports = {
     const populationSize = config.population_size;
 
     for (let i = 0; i < populationSize / 2; i++) {
-      const individual_1 = select(currentPopulation, domain, mapping, initialState, goalState);
-      const individual_2 = select(currentPopulation, domain, mapping, initialState, goalState);
+      var individual_1 = select(currentPopulation, domain, mapping, initialState, goalState);
+      var individual_2 = select(currentPopulation, domain, mapping, initialState, goalState);
 
       if (Math.random() > config.crossover_prob) {
-        const children = crossover(individual_1, individual_2);
-        const child_1 = mutate(mapping, children[0]);
-        const child_2 = mutate(mapping, children[1]);
+        const children = crossover(individual_1, individual_2, domain, mapping, initialState);
+        var child_1 = children[0];
+        var child_2 = children[1];
+        if (Math.random > config.cross_and_mutate_prob) {
+          child_1 = mutate(mapping, child_1);
+        }
+        if (Math.random > config.cross_and_mutate_prob) {
+          child_2 = mutate(mapping, child_2);
+        }
 
         var child_1_fitness = getFitness(child_1, domain, mapping, initialState, goalState);
         var child_2_fitness = getFitness(child_2, domain, mapping, initialState, goalState);
         var parent_1_fitness = getFitness(individual_1, domain, mapping, initialState, goalState);
         var parent_2_fitness = getFitness(individual_2, domain, mapping, initialState, goalState);
 
-        if (child_1_fitness > parent_1_fitness && 
-            child_1_fitness > parent_2_fitness &&
+        if (child_1_fitness < parent_1_fitness && 
+            child_1_fitness < parent_2_fitness &&
             Math.random() < config.elitist_prob) {
           newPopulation.push(child_1);
         } else {
           // the child was worse than both parents so add the better parent
-          if (parent_1_fitness > parent_2_fitness) {
+          if (parent_1_fitness < parent_2_fitness) {
             newPopulation.push(individual_1);
           } else {
             newPopulation.push(individual_2);
           }
         }
 
-        if (child_2_fitness > parent_1_fitness && 
-            child_2_fitness > parent_2_fitness &&
+        if (child_2_fitness < parent_1_fitness && 
+            child_2_fitness < parent_2_fitness &&
             Math.random() < config.elitist_prob) {
           newPopulation.push(child_2);
         } else {
           // the child was worse than both parents so add the better parent
-          if (parent_1_fitness > parent_2_fitness) {
+          if (parent_1_fitness < parent_2_fitness) {
             newPopulation.push(individual_1);
           } else {
             newPopulation.push(individual_2);

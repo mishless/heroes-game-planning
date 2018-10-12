@@ -150,12 +150,14 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
     let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
     let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
     var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
                   config.conflict_actions_pound * numberOfInvalidActions +
                   config.first_conflict_position_pound * sizeBeforeConflict +
                   config.chrom_size_pound * chromosomeSize +
                   config.best_subseq_pound * getBestSequenceSize +
-                  config.collision_final_action_pound * collisionsAtEnd;
+                  config.collision_final_action_pound * collisionsAtEnd+
+                  config.different_actions_pound * differentActions;
 
     fitnesses[chromosomeKey] = fitness;
   }

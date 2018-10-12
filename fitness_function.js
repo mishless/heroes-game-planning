@@ -298,7 +298,7 @@ module.exports = {
 		    });
 		}
 	    }
-    	  
+
     	  for (let i = 0; i <= sequenceSize.indexOf(Math.max(...sequenceSize)); i++){
     	  	indexBestCut += sequenceSize[i];
 		if (sequenceSize[i] === 0){

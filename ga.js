@@ -44,11 +44,11 @@ let randomProperty = function(obj) {
   return keys[(keys.length * Math.random()) << 0];
 };
 
-let selectBest10 = function(population, domain, mapping, initialState, goalState) {
-  let best10 = [];
+let selectBest = function(population, domain, mapping, initialState, goalState) {
+  let best = [];
   let copyOfPopulation = cloneObject(population);
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < config.select_best_chromosomes; i++) {
     let bestIndividual = copyOfPopulation[0];
     let bestFitness = getFitness(bestIndividual, domain, mapping, initialState, goalState);
     for (let i = 1; i < copyOfPopulation.length; i++) {
@@ -60,10 +60,10 @@ let selectBest10 = function(population, domain, mapping, initialState, goalState
         bestFitness = fitness;
       }
     }
-    best10.push(bestIndividual);
+    best.push(bestIndividual);
     copyOfPopulation.splice(copyOfPopulation.indexOf(bestIndividual), 1);
   }
-  return best10;
+  return best;
 };
 
 
@@ -179,18 +179,11 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
     let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
     let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
-    let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    let collisionsAtEnd = 0;
+    if (numberOfInvalidActions == 0) {
+      collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    }
     let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
-    // console.log("-----------------------------------------------------------------------")
-    // console.log(chromosome);
-    // console.log("numberOfPreconditionsNotSatisfied: " + numberOfPreconditionsNotSatisfied);
-    // console.log("numberOfInvalidActions: " + numberOfInvalidActions);
-    // console.log("sizeBeforeConflict: " + sizeBeforeConflict);
-    // console.log("chromosomeSize: " + chromosomeSize);
-    // console.log("getBestSequenceSize: " + getBestSequenceSize);
-    // console.log("collisionsAtEnd: " + collisionsAtEnd);
-    // console.log("differentActions: " + differentActions);
-    // console.log("-----------------------------------------------------------------------");
     var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
                   config.conflict_actions_pound * numberOfInvalidActions +
                   config.first_conflict_position_pound * sizeBeforeConflict +
@@ -202,6 +195,38 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     fitnesses[chromosomeKey] = fitness;
   }
 
+  return fitness;
+};
+
+
+let printFitness = function(chromosome, domain, mapping, initialState, goalState) {
+  let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
+  let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
+  let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+  let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
+  let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
+  let collisionsAtEnd = 0;
+  if (numberOfInvalidActions == 0) {
+    collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+  }
+  let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
+  console.log("-----------------------------------------------------------------------")
+  console.log(chromosome);
+  console.log("numberOfPreconditionsNotSatisfied: " + numberOfPreconditionsNotSatisfied);
+  console.log("numberOfInvalidActions: " + numberOfInvalidActions);
+  console.log("sizeBeforeConflict: " + sizeBeforeConflict);
+  console.log("chromosomeSize: " + chromosomeSize);
+  console.log("getBestSequenceSize: " + getBestSequenceSize);
+  console.log("collisionsAtEnd: " + collisionsAtEnd);
+  console.log("differentActions: " + differentActions);
+  console.log("-----------------------------------------------------------------------");
+  var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
+                config.conflict_actions_pound * numberOfInvalidActions +
+                config.first_conflict_position_pound * sizeBeforeConflict +
+                config.chrom_size_pound * chromosomeSize +
+                config.best_subseq_pound * getBestSequenceSize +
+                config.collision_final_action_pound * collisionsAtEnd+
+                config.different_actions_pound * differentActions;
   return fitness;
 };
 
@@ -306,12 +331,9 @@ module.exports = {
     return population;
   },
   generateNewPopulation: function(currentPopulation, domain, mapping, initialState, goalState) {
-    const newPopulation = selectBest10(currentPopulation, domain, mapping, initialState, goalState);
+    const newPopulation = selectBest(currentPopulation, domain, mapping, initialState, goalState);
     const populationSize = config.population_size;
-
-    //console.log(selectBest10(currentPopulation, domain, mapping, initialState, goalState));
-
-    for (let i = 0; i < (populationSize-10) / 2; i++) {
+    for (let i = 0; i < (populationSize-config.select_best_chromosomes) / 2; i++) {
       var individual_1 = select(currentPopulation, domain, mapping, initialState, goalState);
       var individual_2 = select(currentPopulation, domain, mapping, initialState, goalState);
 
@@ -362,6 +384,7 @@ module.exports = {
         newPopulation.push(mutate(mapping, individual_2));
       }
     }
+    console.log(newPopulation.length);
     return newPopulation;
   },
   getTheFittest: function(currentPopulation, domain, mapping, initialState, goalState) {
@@ -375,6 +398,9 @@ module.exports = {
       }
     }
     return {individual, bestFitness};
+  },
+  printFitness: function(chromosome, domain, mapping, initialState, goalState) {
+    printFitness(chromosome, domain, mapping, initialState, goalState);
   }
 
 };

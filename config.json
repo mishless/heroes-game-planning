@@ -15,5 +15,6 @@
   "first_conflict_position_pound": -0.02,
   "chrom_size_pound": 0.001,
   "best_subseq_pound": -0.01,
-  "collision_final_action_pound": -0.02
+  "collision_final_action_pound": -0.02,
+  "different_actions_pound": -0.1
 }

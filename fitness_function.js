@@ -290,5 +290,19 @@ module.exports = {
         }
     }
     return getGoalPreconditions(state, goalState);
+  },
+
+  getDifferentActions(domain, mapping, chromosome, currentState) {
+    let state = cloneObject(currentState);
+    let different_actions = [];
+    let number_dif_actions = 0;
+    for (let i = 0; i < chromosome.length; i++) {
+        let currentAction = chromosome[i][0];
+	if (different_actions.indexOf(currentAction)<0){
+		different_actions.push(currentAction);
+		number_dif_actions++;
+	}
+    }
+    return number_dif_actions;
   }
 };

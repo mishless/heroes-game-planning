@@ -142,7 +142,7 @@ let crossover = function(chromosome_1, chromosome_2, domain, mapping, initialSta
   const lastPartChromosome2 = copyOfSecondChromosome.splice(index);
   const newChromosome_1 = copyOfFirstChromosome.concat(lastPartChromosome2);
   const newChromosome_2 = copyOfSecondChromosome.concat(lastPartChromosome1);
-  
+
   return [newChromosome_1, newChromosome_2];
 };
 
@@ -306,13 +306,8 @@ module.exports = {
         var parent_1_fitness = getFitness(individual_1, domain, mapping, initialState, goalState);
         var parent_2_fitness = getFitness(individual_2, domain, mapping, initialState, goalState);
 
-<<<<<<< HEAD
-        if (child_1_fitness > parent_1_fitness &&
-            child_1_fitness > parent_2_fitness &&
-=======
-        if (child_1_fitness < parent_1_fitness && 
+        if (child_1_fitness < parent_1_fitness &&
             child_1_fitness < parent_2_fitness &&
->>>>>>> e59b6de946c978ce75d0915e91e6bf3e20d354ab
             Math.random() < config.elitist_prob) {
           newPopulation.push(child_1);
         } else {
@@ -324,13 +319,8 @@ module.exports = {
           }
         }
 
-<<<<<<< HEAD
-        if (child_2_fitness > parent_1_fitness &&
-            child_2_fitness > parent_2_fitness &&
-=======
-        if (child_2_fitness < parent_1_fitness && 
+        if (child_2_fitness < parent_1_fitness &&
             child_2_fitness < parent_2_fitness &&
->>>>>>> e59b6de946c978ce75d0915e91e6bf3e20d354ab
             Math.random() < config.elitist_prob) {
           newPopulation.push(child_2);
         } else {

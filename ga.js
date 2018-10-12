@@ -384,7 +384,6 @@ module.exports = {
         newPopulation.push(mutate(mapping, individual_2));
       }
     }
-    console.log(newPopulation.length);
     return newPopulation;
   },
   getTheFittest: function(currentPopulation, domain, mapping, initialState, goalState) {

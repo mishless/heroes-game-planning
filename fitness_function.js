@@ -259,6 +259,9 @@ module.exports = {
 		    });
 		}
 	    }
+      if (sequenceSize.length === 0) {
+        return 0;
+      }
 	    return Math.max(...sequenceSize);
 	},
   getIndexBestCut(domain, mapping, chromosome, currentState) {

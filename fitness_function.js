@@ -1,48 +1,294 @@
+const strips = require("strips");
+const R = require("ramda");
+
+// This is how you deep clone in JavaScript :D
+const cloneObject = object => JSON.parse(JSON.stringify(object));
+
+let getGoalPreconditions = function(state, goalState) {
+    // Returns true if the state contains the goal conditions.
+    let goalPreconditions = 0;
+    for (var i in goalState.actions) {
+        var goalAction = goalState.actions[i];
+        var operation = goalAction.operation || 'and';
+        if (operation == 'and') {
+            // Make sure this action exists in the state.
+            for (var j in state.actions) {
+                if (StripsManager.isEqual(state.actions[j], goalAction)) {
+                    goalPreconditions++;
+                    break;
+                }
+            }
+        } else {
+            // Make sure this action does not exist in the state.
+            for (var j in state.actions) {
+                if (StripsManager.isEqual(state.actions[j], goalAction)) {
+                    // This is our target, so it fails the goal test.
+                    goalPreconditions++;
+                    break;
+                }
+            }
+        }
+    }
+    return goalPreconditions;
+};
+
+// it gets the action to apply calculate it with the state and return STRIP apply action
+const updateCurrentState = ({
+    domainActions,
+   currentAction,
+   actualParameters,
+   currentState
+}) => {
+    let actionToApply = domainActions.find(({
+        action
+    }) => action === currentAction);
+    if (!actionToApply) {
+        throw new Error('The action to apply doesnt exist in the domain')
+    }
+
+    actionToApply.map = actualParameters;
+    let actionToApplyWithEffect = getApplicableActionInState(
+        currentState,
+        actionToApply
+    );
+
+    return strips.applyAction(
+        actionToApplyWithEffect,
+        currentState
+    );
+};
+
+// actualParameters is an object which keys are [parameters] and value is the currentParameter by index
+const getActualParameters = (parameters, currentParameters) => Object.keys(parameters).reduce(
+    (acc, parameter, index) => ({ ...acc,
+        [parameter]: currentParameters[index]
+    }), {});
+
+const getApplicableActionInState = function(state, action) {
+    let resolvedAction;
+    const populatedEffect = JSON.parse(JSON.stringify(action.effect));
+    for (const m in action.effect) {
+        var effect = action.effect[m];
+        for (const n in effect.parameters) {
+            const parameter = effect.parameters[n];
+            const value = action.map[parameter];
+
+            if (value) {
+                // Assign this value to all instances of this parameter in the effect.
+                populatedEffect[m].parameters[n] = value;
+            }
+            else {
+                console.log(`* ERROR: Value not found for parameter ${parameter}.`);
+            }
+        }
+    }
+
+    resolvedAction = JSON.parse(JSON.stringify(action));
+    resolvedAction.effect = populatedEffect;
+    resolvedAction.map = action.map;
+    return resolvedAction;
+};
+
 module.exports = {
-  getNumberOfConflicts: function (mapping, chromesome, currentState) {
-  	var not_conflicts = 0;
-  	var conflicts = 0;
-  	// console.log("Current state actions: ");
-  	// console.log(currentState.actions);
-  	// console.log("////");
-  	for (i = 0; i < chromesome.length ; i++) {
-      console.log(chromesome);
-  		var chromeAction = chromesome[i][0];
-  		var chromeParameters = chromesome[i][1];
-  		var chromePrecond = mapping.actions[chromeAction].precondition[0];
-  		for (var l = 0; l < chromePrecond.length; l++){
-  			console.log("next");
-  			var auxPrecond = chromePrecond[l];
-  			console.log(auxPrecond);
-  			chromePrecond[l].parameters = chromeParameters;
-  			console.log(chromePrecond[l]);
-  			auxPrecond = '';
-  			//console.log(chromePrecond[l]);
-  			if(chromePrecond[l].operation === 'not' && (currentState.actions.indexOf(auxPrecond) < 0)){
-  				//console.log(chromePrecond[l]);
-  				not_conflicts++;
-  			}
-  			else if (chromePrecond[l].operation !== 'not' && (currentState.actions.indexOf(auxPrecond) >= 0)){
-  				//console.log(chromePrecond[l]);
-  				not_conflicts++;
-  			}
-  		}
-  		conflicts = chromePrecond.length - not_conflicts;
-  		not_conflicts = 0;
-  	}
-  	console.log(conflicts);
-  	return conflicts;
-  },
-  getNumberOfInvalidActions(mapping, chromosome, currentState) {
+    getNumberOfPreconditionsNotSatisfied: function(
+        domain,
+        mapping,
+        chromosome,
+        currentState
+    ) {
+        let state = cloneObject(currentState);
+        let numberOfPreconditionsNotSatisfied = 0;
+        for (let i = 0; i < chromosome.length; i++) {
+            //console.log(chromosome[i]);
+            let currentAction = chromosome[i][0];
+            let currentParameters = chromosome[i][1];
 
-  },
-  getSizeBeforeConflict(chromosome) {
+            let preconditions = cloneObject(
+                mapping.actions[currentAction].precondition[0]
+            );
+            let preconditionsAreSatisfied = true;
 
-  },
-  getChromosozeSize(chromosome) {
+            const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
 
-  },
-  getBestSequenceSize(chromosome) {
+            preconditions.forEach(precondition => {
+                // Returns a brand new precondition with only parameters changed keepin' precondition untouched
+                const parameterizedPrecondition = R.set(
+                    R.lensProp('parameters'),
+                    precondition.parameters.map(
+                        parameter => actualParameters[parameter]
+                    ),
+                    precondition
+                );
 
+                let preconditionIsSatisfied = strips.isPreconditionSatisfied(
+                    state,
+                    [parameterizedPrecondition]
+                );
+                if (!preconditionIsSatisfied) {
+                    numberOfPreconditionsNotSatisfied++;
+                    preconditionsAreSatisfied = false;
+                }
+            });
+            if (preconditionsAreSatisfied) {
+                state = updateCurrentState({
+                    domainActions: domain.actions,
+                    currentAction,
+                    actualParameters,
+                    currentState: state,
+                });
+            }
+        }
+        //console.log(numberOfPreconditionsNotSatisfied);
+        return numberOfPreconditionsNotSatisfied;
+    },
+    getNumberOfInvalidActions(domain, mapping, chromosome, currentState) {
+        let state = cloneObject(currentState);
+        let numberOfInvalidActions = 0;
+        for (let i = 0; i < chromosome.length; i++) {
+            let currentAction = chromosome[i][0];
+            let currentParameters = chromosome[i][1];
+
+            const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+
+            const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+                const parameters = precondition.parameters.map(
+                    (
+                        parameter
+                    ) => actualParameters[parameter]
+                );
+                return { ...precondition,
+                    parameters
+                };
+            });
+
+            const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                state,
+                preconditions
+            );
+            //console.log(preconditions);
+            if (!preconditionsAreSatisfied) {
+                numberOfInvalidActions++;
+            }
+            if (preconditionsAreSatisfied) {
+                state = updateCurrentState({
+                    domainActions: domain.actions,
+                    currentAction,
+                    actualParameters,
+                    currentState: state,
+                });
+            }
+        }
+        //console.log(numberOfInvalidActions);
+        return numberOfInvalidActions;
+    },
+    getSizeBeforeConflict(domain, mapping, chromosome, currentState) {
+        var state = cloneObject(currentState);
+        var sizeBeforeConflict = 0;
+        for (var i = 0; i < chromosome.length; i++) {
+            var currentAction = chromosome[i][0];
+            var currentParameters = chromosome[i][1];
+
+            const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+
+            const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+                const parameters = precondition.parameters.map(
+                    (parameter) => actualParameters[parameter]
+                );
+                return { ...precondition,
+                    parameters
+                };
+            });
+
+            const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                state,
+                preconditions
+            );
+            if (!preconditionsAreSatisfied) {
+      		return sizeBeforeConflict;
+            } else {
+		sizeBeforeConflict++;
+		state = updateCurrentState({
+			domainActions: domain.actions,
+			currentAction,
+			actualParameters,
+			currentState: state,
+		    });
+		}
+	    }
+	    return sizeBeforeConflict;
+	},
+    getChromosozeSize(chromosome) {
+            return chromosome.length;
+	},
+  getBestSequenceSize(domain, mapping, chromosome, currentState) {
+      var state = cloneObject(currentState);
+      var sizeUntillConflict = 0;
+      var sequenceSize = [];
+
+      for (var i = 0; i < chromosome.length; i++) {
+          var currentAction = chromosome[i][0];
+          var currentParameters = chromosome[i][1];
+          const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+          const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+              const parameters = precondition.parameters.map(
+                  (parameter) => actualParameters[parameter]
+              );
+              return { ...precondition,
+                  parameters
+              };
+          });
+
+          const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+              state,
+              preconditions
+          );
+          if (!preconditionsAreSatisfied) {
+      		    sequenceSize.push(sizeUntillConflict);
+			        sizeUntillConflict = 0;
+          }
+    	  else {
+		sizeUntillConflict++;
+		state = updateCurrentState({
+			domainActions: domain.actions,
+			currentAction,
+			actualParameters,
+			currentState: state,
+		    });
+		}
+	    }
+	    return Math.max(...sequenceSize);
+	},
+  getCountCollisionsAtTheEnd(domain, mapping, chromosome, currentState, goalState) {
+    let state = cloneObject(currentState);
+    for (let i = 0; i < chromosome.length; i++) {
+        let currentAction = chromosome[i][0];
+        let currentParameters = chromosome[i][1];
+        const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+        const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+            const parameters = precondition.parameters.map(
+                (parameter) => actualParameters[parameter]
+            );
+            return { ...precondition,
+                parameters
+            };
+        });
+
+        const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+            state,
+            preconditions
+        );
+        if (!preconditionsAreSatisfied) {
+            // Here we can add logic what to do when the preconditions are not met
+        }
+        if (preconditionsAreSatisfied) {
+            state = updateCurrentState({
+                domainActions: domain.actions,
+                currentAction,
+                actualParameters,
+                currentState: state,
+            });
+        }
+    }
+    return getGoalPreconditions(state, goalState);
   }
 };

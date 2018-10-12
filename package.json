@@ -1,7 +1,14 @@
 {
   "name": "heroes_of_might_and_magic",
   "version": "1.0.0",
+  "scripts": {
+    "start": "babel-node ./processor.js"
+  },
   "dependencies": {
-    "strips": "*"
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "strips": "*",
+    "ramda": "*"
   }
 }

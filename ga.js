@@ -44,6 +44,29 @@ let randomProperty = function(obj) {
   return keys[(keys.length * Math.random()) << 0];
 };
 
+let selectBest10 = function(population, domain, mapping, initialState, goalState) {
+  let best10 = [];
+  let copyOfPopulation = cloneObject(population);
+
+  for (let i = 0; i < 10; i++) {
+    let bestIndividual = copyOfPopulation[0];
+    let bestFitness = getFitness(bestIndividual, domain, mapping, initialState, goalState);
+    for (let i = 1; i < copyOfPopulation.length; i++) {
+      const individual = copyOfPopulation[i];
+      const fitness = getFitness(individual, domain, mapping, initialState, goalState);
+
+      if (fitness < bestFitness) {
+        bestIndividual = individual;
+        bestFitness = fitness;
+      }
+    }
+    best10.push(bestIndividual);
+    copyOfPopulation.splice(copyOfPopulation.indexOf(bestIndividual), 1);
+  }
+  return best10;
+};
+
+
 let select = function(population, domain, mapping, initialState, goalState) {
   // select the best individual in a tournament of size N
   const N = config.tournament_size;
@@ -283,10 +306,12 @@ module.exports = {
     return population;
   },
   generateNewPopulation: function(currentPopulation, domain, mapping, initialState, goalState) {
-    const newPopulation = [];
+    const newPopulation = selectBest10(currentPopulation, domain, mapping, initialState, goalState);
     const populationSize = config.population_size;
 
-    for (let i = 0; i < populationSize / 2; i++) {
+    //console.log(selectBest10(currentPopulation, domain, mapping, initialState, goalState));
+
+    for (let i = 0; i < (populationSize-10) / 2; i++) {
       var individual_1 = select(currentPopulation, domain, mapping, initialState, goalState);
       var individual_2 = select(currentPopulation, domain, mapping, initialState, goalState);
 

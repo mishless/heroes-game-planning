@@ -347,11 +347,17 @@ module.exports = {
     let number_dif_actions = 0;
     for (let i = 0; i < chromosome.length; i++) {
         let currentAction = chromosome[i][0];
-	if (different_actions.indexOf(currentAction)<0){
-		different_actions.push(currentAction);
-		number_dif_actions++;
-	}
+      	if (different_actions.indexOf(currentAction)<0){
+      		different_actions.push(currentAction);
+      		number_dif_actions++;
+      	}
     }
     return number_dif_actions;
+  },
+  getActualParameters: function(parameters, currentParameters) {
+    return getActualParameters(parameters, currentParameters);
+  },
+  updateCurrentState: function(arg) {
+    return updateCurrentState(arg);
   }
 };

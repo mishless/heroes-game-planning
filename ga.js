@@ -1,5 +1,6 @@
 let config = require("./config.json");
 let fitnessFunction = require('./fitness_function.js');
+let strips = require('strips');
 
 let fitnesses = {};
 
@@ -33,10 +34,11 @@ let getGeneValidActionFromState = function(domain, state, getValidActions) {
         validActions[randomValidAction].map[parameter]
       );
     }
-    return [
-      validActions[randomValidAction].action,
-      randomValidActionParameters
-    ];
+    return {'action': [
+              validActions[randomValidAction].action,
+              randomValidActionParameters
+            ],
+            'stripsAction': validActions[randomValidAction]};
   }
   return null;
 };
@@ -140,7 +142,7 @@ let crossover = function(chromosome_1, chromosome_2) {
 };
 
 let getFitness = function(chromosome, domain, mapping, initialState, goalState) {
-  var chromosomeKey = JSON.stringify(chromosome) 
+  var chromosomeKey = JSON.stringify(chromosome)
   if (chromosomeKey in fitnesses) {
     var fitness = fitnesses[chromosomeKey];
   } else {
@@ -161,7 +163,7 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
 
     fitnesses[chromosomeKey] = fitness;
   }
-  
+
   return fitness;
 };
 
@@ -206,33 +208,54 @@ module.exports = {
       }
     });
     let population = [];
-    let firstGene = getGeneValidActionFromState(
+    let firstGeneActionObject = getGeneValidActionFromState(
       domain,
       problem.states[0],
       applicableActions
     );
+    let firstGene = firstGeneActionObject.action;
     if (firstGene === null) {
       console.log("There is no valid first action.");
     } else {
-      for (let i = 0; i < populationSize; i++) {
-        let newChromosome = [];
-        newChromosome.push(firstGene);
-        for (let j = 1; j < chromesomeSize; j++) {
-          let randomActionKey = randomProperty(mapping.actions);
-          let randomAction = mapping.actions[randomActionKey];
-          let randomParameterInstances = [];
-          for (let parameter in randomAction.parameters) {
-            let parameterType = randomAction.parameters[parameter];
-            let randomParameterInstanceKey = randomProperty(
-              mapping.instances[parameterType]
-            );
-            randomParameterInstances.push(
-              mapping.instances[parameterType][randomParameterInstanceKey]
-            );
+      if (!config.generate_only_random_valid_moves) {
+        for (let i = 0; i < populationSize; i++) {
+          let newChromosome = [];
+          newChromosome.push(firstGene);
+          for (let j = 1; j < chromesomeSize; j++) {
+            let randomActionKey = randomProperty(mapping.actions);
+            let randomAction = mapping.actions[randomActionKey];
+            let randomParameterInstances = [];
+            for (let parameter in randomAction.parameters) {
+              let parameterType = randomAction.parameters[parameter];
+              let randomParameterInstanceKey = randomProperty(
+                mapping.instances[parameterType]
+              );
+              randomParameterInstances.push(
+                mapping.instances[parameterType][randomParameterInstanceKey]
+              );
+            }
+            newChromosome.push([randomActionKey, randomParameterInstances]);
           }
-          newChromosome.push([randomActionKey, randomParameterInstances]);
+          population.push(newChromosome);
         }
-        population.push(newChromosome);
+      } else {
+        let state = cloneObject(problem.states[0]);
+        let stripsAction = firstGeneActionObject.stripsAction;
+        for (let i = 0; i < populationSize; i++) {
+          let newChromosome = [];
+          newChromosome.push(firstGene);
+          for (let j = 1; j < chromesomeSize; j++) {
+            state = strips.applyAction(stripsAction, state)
+            let geneActionObject = getGeneValidActionFromState(
+              domain,
+              state,
+              applicableActions
+            );
+            newChromosome.push(geneActionObject.action)
+            stripsAction = geneActionObject.stripsAction
+          }
+          population.push(newChromosome);
+        }
       }
     }
     return population;

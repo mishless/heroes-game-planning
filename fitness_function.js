@@ -29,6 +29,9 @@ let getGoalPreconditions = function(state, goalState) {
             }
         }
     }
+    // if (goalPreconditions != 0) {
+    //   console.log("GOAAAAAL");
+    // }
     return goalPreconditions;
 };
 

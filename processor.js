@@ -43,7 +43,7 @@ strips.load(
       console.log("Generation " + i);
       initialPopulation = GA.generateNewPopulation(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
       let test = GA.getTheFittest(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
-      console.log(test);
+      console.log(test.individual);
     }
   }
 );

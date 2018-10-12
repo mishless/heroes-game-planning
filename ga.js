@@ -136,7 +136,8 @@ let crossover = function(chromosome_1, chromosome_2, domain, mapping, initialSta
   var index = 0;
 
   if (Math.random() < config.crossover_from_conflict_prob) {
-    index = fitnessFunction.getSizeBeforeConflict(domain, mapping, shorterChromosome, initialState) - 1;
+    //index = fitnessFunction.getSizeBeforeConflict(domain, mapping, shorterChromosome, initialState) - 1;
+    index = fitnessFunction.getIndexBestCut(domain, mapping, shorterChromosome, initialState) - 1;
   } else {
     index = Math.floor(Math.random() * shorterChromosome.length);
   }

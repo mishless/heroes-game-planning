@@ -1,6 +1,8 @@
 {
   "generations": 300,
   "crossover_prob": 0.8,
+  "crossover_from_conflict_prob" : 0.8,
+  "mutate_from_conflict_prob" : 0.8,
   "crossover_from_conflict_prob" : 0.2,
   "cross_and_mutate_prob": 0.5,
   "mutation_growth_prob": 0.01,
@@ -9,6 +11,7 @@
   "mutation_replace_prob": 0.01,
   "mutation_param_prob": 0.01,
   "elitist_prob": 0.8,
+  "elitist_mutate_prob": 0.6,
   "tournament_size": 5,
   "population_size": 100,
   "chromosome_size": 15,
@@ -19,5 +22,7 @@
   "best_subseq_pound": -0.01,
   "collision_final_action_pound": -100,
   "different_actions_pound": -0.01,
+  "select_best_chromosomes": 3,
+  "repeating_actions_pound": 0.1,
   "generate_only_random_valid_moves": false
 }

@@ -88,7 +88,7 @@ let select = function(population, domain, mapping, initialState, goalState) {
   return bestIndividual;
 };
 
-let mutate = function(mapping, chromosome) {
+let mutate = function(mapping, chromosome, domain, initialState, goalState) {
   const growthProb = config.mutation_growth_prob;
   const shrinkProb = config.mutation_shrink_prob;
   const swapProb = config.mutation_swap_prob;
@@ -97,21 +97,47 @@ let mutate = function(mapping, chromosome) {
   // maybe add heuristic mutation?
   if (Math.random() <= growthProb) {
     // generate random index to add action to
-    var index = Math.floor(Math.random() * chromosome.length);
+    var index;
+    if (Math.random() < config.mutate_from_conflict_prob) {
+      index = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    } else {
+      index = Math.floor(Math.random() * chromosome.length);
+    }
     // insert the random action into the chromosome
-    chromosome.splice(index, 0, newRandomAction(mapping));
+    let copyOfChromosome = cloneObject(chromosome);
+    copyOfChromosome.splice(index, 0, newRandomAction(mapping));
+    // if the mutated individual is worse than the partent with elisitst probability keep the parent
+    if (getFitness(copyOfChromosome, domain, mapping, initialState, goalState) < getFitness(chromosome, domain, mapping, initialState, goalState) &&
+        config.elitist_mutate_prob > Math.random()) {
+      chromosome = copyOfChromosome;
+    }
   }
 
   if (Math.random() <= shrinkProb && chromosome.length > 3) {
     // generate random index to remove action from
-    var index = Math.floor(Math.random() * chromosome.length);
+    var index;
+    if (Math.random() < config.mutate_from_conflict_prob) {
+      index = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    } else {
+      index = Math.floor(Math.random() * chromosome.length);
+    }
     // remove action at specified index
-    chromosome.splice(index, 1);
+    let copyOfChromosome = cloneObject(chromosome);
+    copyOfChromosome.splice(index, 1);
+    if (getFitness(copyOfChromosome, domain, mapping, initialState, goalState) < getFitness(chromosome, domain, mapping, initialState, goalState) &&
+        config.elitist_mutate_prob > Math.random()) {
+      chromosome = copyOfChromosome;
+    }
   }
 
   if (Math.random() <= swapProb) {
     // generate random indices to swap
-    const index_1 = Math.floor(Math.random() * chromosome.length);
+    var index_1;
+    if (Math.random() < config.mutate_from_conflict_prob) {
+      index_1 = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    } else {
+      index_1 = Math.floor(Math.random() * chromosome.length);
+    }
     const index_2 = Math.floor(Math.random() * chromosome.length);
     // swap the actions
     const action_1 = chromosome[index_1];
@@ -122,7 +148,12 @@ let mutate = function(mapping, chromosome) {
 
   if (Math.random() <= replaceProb) {
     // generate random index to replace
-    var index = Math.floor(Math.random() * chromosome.length);
+    var index;
+    if (Math.random() < config.mutate_from_conflict_prob) {
+      index = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    } else {
+      index = Math.floor(Math.random() * chromosome.length);
+    }
     // replace the action at index with new random action
     chromosome[index] = newRandomAction(mapping);
   }
@@ -155,7 +186,6 @@ let crossover = function(chromosome_1, chromosome_2, domain, mapping, initialSta
   var index = 0;
 
   if (Math.random() < config.crossover_from_conflict_prob) {
-    //index = fitnessFunction.getSizeBeforeConflict(domain, mapping, shorterChromosome, initialState) - 1;
     index = fitnessFunction.getIndexBestCut(domain, mapping, shorterChromosome, initialState) - 1;
   } else {
     index = Math.floor(Math.random() * shorterChromosome.length);
@@ -184,13 +214,15 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
       collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
     }
     let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
+    let sameMoves = fitnessFunction.countSameMoves(chromosome);
     var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
                   config.conflict_actions_pound * numberOfInvalidActions +
                   config.first_conflict_position_pound * sizeBeforeConflict +
                   config.chrom_size_pound * chromosomeSize +
                   config.best_subseq_pound * getBestSequenceSize +
                   config.collision_final_action_pound * collisionsAtEnd+
-                  config.different_actions_pound * differentActions;
+                  config.different_actions_pound * differentActions +
+                  config.repeating_actions_pound * sameMoves;
 
     fitnesses[chromosomeKey] = fitness;
   }
@@ -210,6 +242,7 @@ let printFitness = function(chromosome, domain, mapping, initialState, goalState
     collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
   }
   let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
+  let sameMoves = fitnessFunction.countSameMoves(chromosome);
   console.log("-----------------------------------------------------------------------")
   console.log(chromosome);
   console.log("numberOfPreconditionsNotSatisfied: " + numberOfPreconditionsNotSatisfied);
@@ -219,6 +252,7 @@ let printFitness = function(chromosome, domain, mapping, initialState, goalState
   console.log("getBestSequenceSize: " + getBestSequenceSize);
   console.log("collisionsAtEnd: " + collisionsAtEnd);
   console.log("differentActions: " + differentActions);
+  console.log("sameMoves: " + sameMoves);
   console.log("-----------------------------------------------------------------------");
   var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
                 config.conflict_actions_pound * numberOfInvalidActions +
@@ -342,10 +376,10 @@ module.exports = {
         var child_1 = children[0];
         var child_2 = children[1];
         if (Math.random > config.cross_and_mutate_prob) {
-          child_1 = mutate(mapping, child_1);
+          child_1 = mutate(mapping, child_1, domain, initialState, goalState);
         }
         if (Math.random > config.cross_and_mutate_prob) {
-          child_2 = mutate(mapping, child_2);
+          child_2 = mutate(mapping, child_2, domain, initialState, goalState);
         }
 
         var child_1_fitness = getFitness(child_1, domain, mapping, initialState, goalState);
@@ -380,8 +414,8 @@ module.exports = {
         }
 
       } else {
-        newPopulation.push(mutate(mapping, individual_1));
-        newPopulation.push(mutate(mapping, individual_2));
+        newPopulation.push(mutate(mapping, individual_1, domain, initialState, goalState));
+        newPopulation.push(mutate(mapping, individual_2, domain, initialState, goalState));
       }
     }
     return newPopulation;

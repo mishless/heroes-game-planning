@@ -102,7 +102,6 @@ module.exports = {
         let state = cloneObject(currentState);
         let numberOfPreconditionsNotSatisfied = 0;
         for (let i = 0; i < chromosome.length; i++) {
-            //console.log(chromosome[i]);
             let currentAction = chromosome[i][0];
             let currentParameters = chromosome[i][1];
 
@@ -264,6 +263,24 @@ module.exports = {
       }
 	    return Math.max(...sequenceSize);
 	},
+  countSameMoves(chromosome) {
+    let sameMoves = 0;
+    let sameMovesArray = [];
+    let previousMove = chromosome[0][0];
+    for (let i = 1; i<chromosome.lenght; i++) {
+      if (chromosome[i][0] === previousMove) {
+        sameMoves++;
+      } else {
+        sameMovesArray.push(sameMoves);
+        sameMoves = 0;
+      }
+      previousMove = chromosome[i][0];
+    }
+    if (sameMovesArray.length === 0) {
+      return 0;
+    }
+    return Math.max(...sameMovesArray);
+  },
   getIndexBestCut(domain, mapping, chromosome, currentState) {
       var state = cloneObject(currentState);
       var sizeUntillConflict = 0;

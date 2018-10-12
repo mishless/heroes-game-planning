@@ -1,6 +1,8 @@
 let config = require("./config.json");
 let fitnessFunction = require('./fitness_function.js');
 
+let fitnesses = {};
+
 // This is how you deep clone in JavaScript :D
 const cloneObject = object => JSON.parse(JSON.stringify(object));
 
@@ -138,19 +140,27 @@ let crossover = function(chromosome_1, chromosome_2) {
 };
 
 let getFitness = function(chromosome, domain, mapping, initialState, goalState) {
-  let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
-  let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
-  let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
-  let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
-  let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
-  let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
-  return config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
-         config.conflict_actions_pound * numberOfInvalidActions +
-         config.first_conflict_position_pound * sizeBeforeConflict +
-         config.chrom_size_pound * chromosomeSize +
-         config.best_subseq_pound * getBestSequenceSize +
-         config.collision_final_action_pound * collisionsAtEnd;
+  var chromosomeKey = JSON.stringify(chromosome) 
+  if (chromosomeKey in fitnesses) {
+    var fitness = fitnesses[chromosomeKey];
+  } else {
+    let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
+    let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
+    let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
+    let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
+    let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
+                  config.conflict_actions_pound * numberOfInvalidActions +
+                  config.first_conflict_position_pound * sizeBeforeConflict +
+                  config.chrom_size_pound * chromosomeSize +
+                  config.best_subseq_pound * getBestSequenceSize +
+                  config.collision_final_action_pound * collisionsAtEnd;
 
+    fitnesses[chromosomeKey] = fitness;
+  }
+  
+  return fitness;
 };
 
 module.exports = {

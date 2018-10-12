@@ -81,7 +81,7 @@ let mutate = function(mapping, chromosome) {
     chromosome.splice(index, 0, newRandomAction(mapping));
   }
 
-  if (Math.random() <= shrinkProb) {
+  if (Math.random() <= shrinkProb && chromosome.length > 3) {
     // generate random index to remove action from
     var index = Math.floor(Math.random() * chromosome.length);
     // remove action at specified index

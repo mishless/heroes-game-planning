@@ -34,11 +34,7 @@ let getGeneValidActionFromState = function(domain, state, getValidActions) {
         validActions[randomValidAction].map[parameter]
       );
     }
-    return {'action': [
-              validActions[randomValidAction].action,
-              randomValidActionParameters
-            ],
-            'stripsAction': validActions[randomValidAction]};
+    return [validActions[randomValidAction].action, randomValidActionParameters];
   }
   return null;
 };
@@ -153,6 +149,16 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
     let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
     let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
+    // console.log("-----------------------------------------------------------------------")
+    // console.log(chromosome);
+    // console.log("numberOfPreconditionsNotSatisfied: " + numberOfPreconditionsNotSatisfied);
+    // console.log("numberOfInvalidActions: " + numberOfInvalidActions);
+    // console.log("sizeBeforeConflict: " + sizeBeforeConflict);
+    // console.log("chromosomeSize: " + chromosomeSize);
+    // console.log("getBestSequenceSize: " + getBestSequenceSize);
+    // console.log("collisionsAtEnd: " + collisionsAtEnd);
+    // console.log("differentActions: " + differentActions);
+    // console.log("-----------------------------------------------------------------------");
     var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
                   config.conflict_actions_pound * numberOfInvalidActions +
                   config.first_conflict_position_pound * sizeBeforeConflict +
@@ -208,12 +214,11 @@ module.exports = {
       }
     });
     let population = [];
-    let firstGeneActionObject = getGeneValidActionFromState(
+    let firstGene = getGeneValidActionFromState(
       domain,
       problem.states[0],
       applicableActions
     );
-    let firstGene = firstGeneActionObject.action;
     if (firstGene === null) {
       console.log("There is no valid first action.");
     } else {
@@ -239,20 +244,28 @@ module.exports = {
           population.push(newChromosome);
         }
       } else {
-        let state = cloneObject(problem.states[0]);
-        let stripsAction = firstGeneActionObject.stripsAction;
         for (let i = 0; i < populationSize; i++) {
+          var state = cloneObject(problem.states[0]);
+          var action = firstGene[0];
+          var parameters = firstGene[1];
           let newChromosome = [];
           newChromosome.push(firstGene);
           for (let j = 1; j < chromesomeSize; j++) {
-            state = strips.applyAction(stripsAction, state)
-            let geneActionObject = getGeneValidActionFromState(
+            const actualParameters = fitnessFunction.getActualParameters(mapping.actions[action].parameters, parameters);
+            state = fitnessFunction.updateCurrentState({
+               domainActions: domain.actions,
+               currentAction: action,
+               actualParameters,
+               currentState: state
+            });
+            let newGene = getGeneValidActionFromState(
               domain,
               state,
               applicableActions
             );
-            newChromosome.push(geneActionObject.action)
-            stripsAction = geneActionObject.stripsAction
+            newChromosome.push(newGene);
+            action = newGene[0];
+            parameters = newGene[1];
           }
           population.push(newChromosome);
         }
@@ -278,7 +291,7 @@ module.exports = {
         var parent_1_fitness = getFitness(individual_1, domain, mapping, initialState, goalState);
         var parent_2_fitness = getFitness(individual_2, domain, mapping, initialState, goalState);
 
-        if (child_1_fitness > parent_1_fitness && 
+        if (child_1_fitness > parent_1_fitness &&
             child_1_fitness > parent_2_fitness &&
             Math.random() < config.elitist_prob) {
           newPopulation.push(child_1);
@@ -291,7 +304,7 @@ module.exports = {
           }
         }
 
-        if (child_2_fitness > parent_1_fitness && 
+        if (child_2_fitness > parent_1_fitness &&
             child_2_fitness > parent_2_fitness &&
             Math.random() < config.elitist_prob) {
           newPopulation.push(child_2);

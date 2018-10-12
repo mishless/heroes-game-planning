@@ -261,6 +261,52 @@ module.exports = {
 	    }
 	    return Math.max(...sequenceSize);
 	},
+  getIndexBestCut(domain, mapping, chromosome, currentState) {
+      var state = cloneObject(currentState);
+      var sizeUntillConflict = 0;
+      var sequenceSize = [];
+      var indexBestCut = 0;
+
+      for (var i = 0; i < chromosome.length; i++) {
+          var currentAction = chromosome[i][0];
+          var currentParameters = chromosome[i][1];
+          const actualParameters = getActualParameters(mapping.actions[currentAction].parameters, currentParameters);
+          const preconditions = mapping.actions[currentAction].precondition[0].map(precondition => {
+              const parameters = precondition.parameters.map(
+                  (parameter) => actualParameters[parameter]
+              );
+              return { ...precondition,
+                  parameters
+              };
+          });
+
+          const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+              state,
+              preconditions
+          );
+          if (!preconditionsAreSatisfied) {
+      		    sequenceSize.push(sizeUntillConflict);
+			        sizeUntillConflict = 0;
+          }
+    	  else {
+		sizeUntillConflict++;
+		state = updateCurrentState({
+			domainActions: domain.actions,
+			currentAction,
+			actualParameters,
+			currentState: state,
+		    });
+		}
+	    }
+    	  
+    	  for (let i = 0; i <= sequenceSize.indexOf(Math.max(...sequenceSize)); i++){
+    	  	indexBestCut += sequenceSize[i];
+		if (sequenceSize[i] === 0){
+			indexBestCut += 1;
+		}
+    	  }
+	  return indexBestCut;
+	},
   getCountCollisionsAtTheEnd(domain, mapping, chromosome, currentState, goalState) {
     let state = cloneObject(currentState);
     for (let i = 0; i < chromosome.length; i++) {

@@ -269,21 +269,14 @@ module.exports = {
 	},
   countSameMoves(chromosome) {
     let sameMoves = 0;
-    let sameMovesArray = [];
-    let previousMove = chromosome[0][0];
-    for (let i = 1; i<chromosome.lenght; i++) {
-      if (chromosome[i][0] === previousMove) {
-        sameMoves++;
-      } else {
-        sameMovesArray.push(sameMoves);
-        sameMoves = 0;
+    var  count = {};
+    chromosome.forEach(function(i) { count[i] = (count[i]||0) + 1;});
+    for (var element in count) {
+      if (count[element] > 1){
+        sameMoves += count[element];
       }
-      previousMove = chromosome[i][0];
-    }
-    if (sameMovesArray.length === 0) {
-      return 0;
-    }
-    return Math.max(...sameMovesArray) / chromosome.length;
+    } 
+    return sameMoves / chromosome.length;
   },
   getIndexBestCut(domain, mapping, chromosome, currentState) {
       var state = cloneObject(currentState);

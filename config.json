@@ -20,6 +20,8 @@
   "first_conflict_position_pound": -0.01,
   "chrom_size_pound": -0.01,
   "best_subseq_pound": -0.01,
+  "maximum_size_that_will_be_considered_in_pound": 30,
+  "best_subseq_pound": -0.05,
   "collision_final_action_pound": -100,
   "different_actions_pound": -0.01,
   "select_best_chromosomes": 3,

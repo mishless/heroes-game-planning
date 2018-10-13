@@ -101,6 +101,8 @@ module.exports = {
     ) {
         let state = cloneObject(currentState);
         let numberOfPreconditionsNotSatisfied = 0;
+        let numberOfPreconditions = 0;
+        //  console.log(chromosome);
         for (let i = 0; i < chromosome.length; i++) {
             let currentAction = chromosome[i][0];
             let currentParameters = chromosome[i][1];
@@ -126,6 +128,7 @@ module.exports = {
                     state,
                     [parameterizedPrecondition]
                 );
+                numberOfPreconditions++;
                 if (!preconditionIsSatisfied) {
                     numberOfPreconditionsNotSatisfied++;
                     preconditionsAreSatisfied = false;
@@ -140,12 +143,12 @@ module.exports = {
                 });
             }
         }
-        //console.log(numberOfPreconditionsNotSatisfied);
-        return numberOfPreconditionsNotSatisfied;
+        return numberOfPreconditionsNotSatisfied / numberOfPreconditions;
     },
     getNumberOfInvalidActions(domain, mapping, chromosome, currentState) {
         let state = cloneObject(currentState);
         let numberOfInvalidActions = 0;
+        let numberOfActions = chromosome.length;
         for (let i = 0; i < chromosome.length; i++) {
             let currentAction = chromosome[i][0];
             let currentParameters = chromosome[i][1];
@@ -181,7 +184,7 @@ module.exports = {
             }
         }
         //console.log(numberOfInvalidActions);
-        return numberOfInvalidActions;
+        return numberOfInvalidActions / numberOfActions;
     },
     getSizeBeforeConflict(domain, mapping, chromosome, currentState) {
         var state = cloneObject(currentState);
@@ -219,8 +222,9 @@ module.exports = {
 	    }
 	    return sizeBeforeConflict;
 	},
-    getChromosozeSize(chromosome) {
-            return chromosome.length;
+  getChromosozeSize(chromosome, maxSize) {
+    let size = chromosome.length / maxSize
+    return size > 1 ? 1 : size;
 	},
   getBestSequenceSize(domain, mapping, chromosome, currentState) {
       var state = cloneObject(currentState);
@@ -261,7 +265,7 @@ module.exports = {
       if (sequenceSize.length === 0) {
         return 0;
       }
-	    return Math.max(...sequenceSize);
+	    return Math.max(...sequenceSize) / chromosome.length;
 	},
   countSameMoves(chromosome) {
     let sameMoves = 0;
@@ -279,7 +283,7 @@ module.exports = {
     if (sameMovesArray.length === 0) {
       return 0;
     }
-    return Math.max(...sameMovesArray);
+    return Math.max(...sameMovesArray) / chromosome.length;
   },
   getIndexBestCut(domain, mapping, chromosome, currentState) {
       var state = cloneObject(currentState);

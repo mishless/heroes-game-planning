@@ -98,8 +98,9 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
   if (Math.random() <= growthProb) {
     // generate random index to add action to
     var index;
-    if (Math.random() < config.mutate_from_conflict_prob) {
-      index = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    const sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+      index = sizeBeforeConflict;
     } else {
       index = Math.floor(Math.random() * chromosome.length);
     }
@@ -116,8 +117,9 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
   if (Math.random() <= shrinkProb && chromosome.length > 3) {
     // generate random index to remove action from
     var index;
-    if (Math.random() < config.mutate_from_conflict_prob) {
-      index = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    const sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+      index = sizeBeforeConflict;
     } else {
       index = Math.floor(Math.random() * chromosome.length);
     }
@@ -133,8 +135,9 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
   if (Math.random() <= swapProb) {
     // generate random indices to swap
     var index_1;
-    if (Math.random() < config.mutate_from_conflict_prob) {
-      index_1 = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    const sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+      index_1 = sizeBeforeConflict;
     } else {
       index_1 = Math.floor(Math.random() * chromosome.length);
     }
@@ -149,8 +152,9 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
   if (Math.random() <= replaceProb) {
     // generate random index to replace
     var index;
-    if (Math.random() < config.mutate_from_conflict_prob) {
-      index = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    const sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+      index = sizeBeforeConflict;
     } else {
       index = Math.floor(Math.random() * chromosome.length);
     }
@@ -207,7 +211,7 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
     let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
     let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
-    let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
+    let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome, config.maximum_size_that_will_be_considered_in_pound);
     let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
     let collisionsAtEnd = 0;
     if (numberOfInvalidActions == 0) {
@@ -235,7 +239,7 @@ let printFitness = function(chromosome, domain, mapping, initialState, goalState
   let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
   let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
   let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
-  let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome);
+  let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome, config.maximum_size_that_will_be_considered_in_pound);
   let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
   let collisionsAtEnd = 0;
   if (numberOfInvalidActions == 0) {
@@ -367,9 +371,9 @@ module.exports = {
   generateNewPopulation: function(currentPopulation, domain, mapping, initialState, goalState) {
     const newPopulation = selectBest(currentPopulation, domain, mapping, initialState, goalState);
     const populationSize = config.population_size;
-    for (let i = 0; i < (populationSize-config.select_best_chromosomes) / 2; i++) {
-      var individual_1 = select(currentPopulation, domain, mapping, initialState, goalState);
-      var individual_2 = select(currentPopulation, domain, mapping, initialState, goalState);
+    for (let i = 0; i < (populationSize - config.select_best_chromosomes) / 2; i++) {
+      var individual_1 = cloneObject(select(currentPopulation, domain, mapping, initialState, goalState));
+      var individual_2 = cloneObject(select(currentPopulation, domain, mapping, initialState, goalState));
 
       if (Math.random() > config.crossover_prob) {
         const children = crossover(individual_1, individual_2, domain, mapping, initialState);

@@ -2,11 +2,13 @@ const strips = require("strips");
 const R = require("ramda");
 const config = require("./config.json");
 
-// This is how you deep clone in JavaScript :D
+// This is how you deep clone in JavaScript
 const cloneObject = object => JSON.parse(JSON.stringify(object));
 
+/**
+  Returns the numbers of goal preconditions that are satisfied
+**/
 let getGoalPreconditions = function(state, goalState) {
-    // Returns true if the state contains the goal conditions.
     let goalPreconditions = 0;
     for (var i in goalState.actions) {
         var goalAction = goalState.actions[i];
@@ -30,9 +32,6 @@ let getGoalPreconditions = function(state, goalState) {
             }
         }
     }
-    // if (goalPreconditions != 0) {
-    //   console.log("GOAAAAAL");
-    // }
     return goalPreconditions;
 };
 
@@ -270,14 +269,27 @@ module.exports = {
 	},
   countSameMoves(chromosome) {
     let sameMoves = 0;
-    var  count = {};
-    chromosome.forEach(function(i) { count[i] = (count[i]||0) + 1;});
-    for (var element in count) {
-      if (count[element] > 1){
-        sameMoves += count[element];
+    let firstMoves = chromosome[0];
+    let lastMove = chromosome[0];
+    let counter = 0;
+    var finalCounter = 0;
+    for (let i=1; i<chromosome.length; i++) {
+      if (lastMove[0] === chromosome[i][0] && lastMove[0] === 'move') {
+        if (firstMoves[1][1] === chromosome[i][1][2]) {
+          firstMoves = chromosome[i+1];
+          finalCounter++;
+          counter = 0 ;
+        }
+        if (chromosome[i-1][1][1] === chromosome[i][1][2]) {
+          finalCounter++;
+        }
+        counter++;
+      } else {
+        counter = 0;
       }
-    } 
-    return sameMoves / chromosome.length;
+      lastMove = chromosome[i];
+    }
+    return finalCounter;
   },
   getIndexBestCut(domain, mapping, chromosome, currentState) {
       var state = cloneObject(currentState);
@@ -401,7 +413,7 @@ module.exports = {
                 quarters[3] += 1;
               }
             }
-          } 
+          }
         }
     }
     for (let i = 0; i < quarters.length; i++) {
@@ -434,7 +446,7 @@ module.exports = {
                 quarters[3] += 1;
               }
             }
-          } 
+          }
         }
     }
     return Math.max(...quarters);

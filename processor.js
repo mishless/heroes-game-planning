@@ -6,17 +6,18 @@ const fs = require("fs");
 const config = require("./config.json");
 // Load the domain and problem.
 
-const PROBLEM = mapGenerator.generate(config.grid_col_row, config.grid_col_row, 0, [1]);
+const PROBLEM = mapGenerator.generate(config.grid_col_row, config.grid_col_row, 3, [1, 1, 1, 1, 1]);
 
-fs.writeFile("./hero_problem.pddl", PROBLEM, err => {
+fs.writeFile("./hero_problem.pddl" , PROBLEM, err => {
   if (err) {
     return console.log(err);
   }
   console.log("The file was saved!");
 });
 
+
 strips.load(
-  "./hero_domain_easy.pddl",
+  "./hero_domain_final.pddl",
   "./hero_problem.pddl",
   (domain, problem) => {
     // Get encoding for GA
@@ -43,7 +44,11 @@ strips.load(
       console.log("Generation " + i);
       initialPopulation = GA.generateNewPopulation(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
       let test = GA.getTheFittest(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
-      console.log(test.individual);
+      GA.printFitness(test.individual, domain, mapping, problem.states[0], problem.states[1]);
+      console.log(test.bestFitness);
+      if (i % 10 === 0) {
+        GA.cleanLoops(initialPopulation);
+      }
     }
   }
 );

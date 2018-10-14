@@ -1,5 +1,6 @@
 const strips = require("strips");
 const R = require("ramda");
+const config = require("./config.json");
 
 // This is how you deep clone in JavaScript :D
 const cloneObject = object => JSON.parse(JSON.stringify(object));
@@ -134,7 +135,7 @@ module.exports = {
                     preconditionsAreSatisfied = false;
                 }
             });
-            if (preconditionsAreSatisfied) {
+            if (preconditionsAreSatisfied || Math.random() < config.apply_invalid_action) {
                 state = updateCurrentState({
                     domainActions: domain.actions,
                     currentAction,
@@ -174,7 +175,7 @@ module.exports = {
             if (!preconditionsAreSatisfied) {
                 numberOfInvalidActions++;
             }
-            if (preconditionsAreSatisfied) {
+            if (preconditionsAreSatisfied || Math.random() < config.apply_invalid_action) {
                 state = updateCurrentState({
                     domainActions: domain.actions,
                     currentAction,
@@ -346,7 +347,7 @@ module.exports = {
         if (!preconditionsAreSatisfied) {
             // Here we can add logic what to do when the preconditions are not met
         }
-        if (preconditionsAreSatisfied) {
+        if (preconditionsAreSatisfied || Math.random() < config.apply_invalid_action) {
             state = updateCurrentState({
                 domainActions: domain.actions,
                 currentAction,

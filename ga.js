@@ -24,6 +24,38 @@ let newRandomAction = function(mapping) {
   return [randomActionKey, randomParameterInstances];
 };
 
+let newRandomValidAction = function(domain, mapping, chromosome, initialState) {
+  //console.log("Chromosome passed in: ");
+  //console.log(chromosome);
+  var state = cloneObject(initialState);
+  var action;
+  var parameters;
+  for (let j = 0; j < chromosome.length; j++) {
+    let newGene = getGeneValidActionFromState(
+      domain,
+      state,
+      strips.applicableActions
+    );
+    action = newGene[0];
+    parameters = newGene[1];
+    const actualParameters = fitnessFunction.getActualParameters(mapping.actions[action].parameters, parameters);
+    state = fitnessFunction.updateCurrentState({
+       domainActions: domain.actions,
+       currentAction: action,
+       actualParameters,
+       currentState: state
+    });
+  }
+  let newGene = getGeneValidActionFromState(
+    domain,
+    state,
+    strips.applicableActions
+  );
+  action = newGene[0];
+  parameters = newGene[1];
+  return [action, parameters];
+};
+
 let getGeneValidActionFromState = function(domain, state, getValidActions) {
   let validActions = getValidActions(domain, state);
   if (validActions.length > 0) {
@@ -99,18 +131,30 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
     // generate random index to add action to
     var index;
     const sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    let newAction = 0;
     if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
       index = sizeBeforeConflict;
+      if (Math.random() < config.generate_random_valid_move) {
+        var copyOfChromosome = cloneObject(chromosome);
+        copyOfChromosome.splice(index);
+        newAction = newRandomValidAction(domain, mapping, copyOfChromosome, initialState);
+      } else {
+        newAction = newRandomAction(mapping);
+      }
     } else {
       index = Math.floor(Math.random() * chromosome.length);
+      newAction = newRandomAction(mapping);
     }
     // insert the random action into the chromosome
     let copyOfChromosome = cloneObject(chromosome);
-    copyOfChromosome.splice(index, 0, newRandomAction(mapping));
+    copyOfChromosome.splice(index, 0, newAction);
     // if the mutated individual is worse than the partent with elisitst probability keep the parent
-    if (getFitness(copyOfChromosome, domain, mapping, initialState, goalState) < getFitness(chromosome, domain, mapping, initialState, goalState) &&
-        config.elitist_mutate_prob > Math.random()) {
+    if (getFitness(copyOfChromosome, domain, mapping, initialState, goalState) < getFitness(chromosome, domain, mapping, initialState, goalState)) {
       chromosome = copyOfChromosome;
+    } else {
+      if (Math.random() > config.elitist_mutate_prob) {
+        chromosome = copyOfChromosome;
+      }
     }
   }
 
@@ -126,9 +170,12 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
     // remove action at specified index
     let copyOfChromosome = cloneObject(chromosome);
     copyOfChromosome.splice(index, 1);
-    if (getFitness(copyOfChromosome, domain, mapping, initialState, goalState) < getFitness(chromosome, domain, mapping, initialState, goalState) &&
-        config.elitist_mutate_prob > Math.random()) {
+    if (getFitness(copyOfChromosome, domain, mapping, initialState, goalState) < getFitness(chromosome, domain, mapping, initialState, goalState)) {
       chromosome = copyOfChromosome;
+    } else {
+      if (Math.random() > config.elitist_mutate_prob) {
+        chromosome = copyOfChromosome;
+      }
     }
   }
 
@@ -153,31 +200,47 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
     // generate random index to replace
     var index;
     const sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    let newAction;
     if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
       index = sizeBeforeConflict;
+      if (Math.random() < config.generate_random_valid_move) {
+        var copyOfChromosome = cloneObject(chromosome);
+        copyOfChromosome.splice(index);
+        newAction = newRandomValidAction(domain, mapping, copyOfChromosome, initialState);
+      } else {
+        newAction = newRandomAction(mapping);
+      }
     } else {
       index = Math.floor(Math.random() * chromosome.length);
+      newAction = newRandomAction(mapping);
     }
-    // replace the action at index with new random action
-    chromosome[index] = newRandomAction(mapping);
+    chromosome[index] = newAction;
   }
 
   if (Math.random() <= paramProb) {
     // generate random index to mutate
-    const actionIndex = Math.floor(Math.random() * chromosome.length);
-    // get parameters of action
-    const parameterInstances = chromosome[actionIndex][1];
-    // generate random index of parameter
-    const action = chromosome[actionIndex][0];
-    const randomParameter = Math.floor(Math.random() * parameterInstances.length);
-    // get a new property of the same type
-    const positionalArgument =  Object.keys(mapping.actions[action].parameters)[randomParameter];
-    const paramType = mapping.actions[action].parameters[positionalArgument];
+    let actionIndex;
+    const sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+      actionIndex = sizeBeforeConflict;
+    } else {
+      actionIndex = Math.floor(Math.random() * chromosome.length);
+    }
+    do {
+      // get parameters of action
+      const parameterInstances = chromosome[actionIndex][1];
+      // generate random index of parameter
+      const action = chromosome[actionIndex][0];
+      const randomParameter = Math.floor(Math.random() * parameterInstances.length);
+      // get a new property of the same type
+      const positionalArgument =  Object.keys(mapping.actions[action].parameters)[randomParameter];
+      const paramType = mapping.actions[action].parameters[positionalArgument];
 
-    const randomInstance = Math.floor(Math.random() * mapping.instances[paramType].length);
-    const newInstance = mapping.instances[paramType][randomInstance];
-    // replace the old property with the new property
-    chromosome[actionIndex][1][randomParameter] = newInstance;
+      const randomInstance = Math.floor(Math.random() * mapping.instances[paramType].length);
+      const newInstance = mapping.instances[paramType][randomInstance];
+      // replace the old property with the new property
+      chromosome[actionIndex][1][randomParameter] = newInstance;
+    } while (Math.random() < config.mutate_more_than_one_parameter)
   }
   return chromosome;
 };
@@ -392,28 +455,34 @@ module.exports = {
         var parent_2_fitness = getFitness(individual_2, domain, mapping, initialState, goalState);
 
         if (child_1_fitness < parent_1_fitness &&
-            child_1_fitness < parent_2_fitness &&
-            Math.random() < config.elitist_prob) {
+            child_1_fitness < parent_2_fitness) {
           newPopulation.push(child_1);
         } else {
           // the child was worse than both parents so add the better parent
-          if (parent_1_fitness < parent_2_fitness) {
-            newPopulation.push(individual_1);
+          if (Math.random() < config.elitist_prob) {
+            if (parent_1_fitness < parent_2_fitness) {
+              newPopulation.push(individual_1);
+            } else {
+              newPopulation.push(individual_2);
+            }
           } else {
-            newPopulation.push(individual_2);
+            newPopulation.push(child_1);
           }
         }
 
         if (child_2_fitness < parent_1_fitness &&
-            child_2_fitness < parent_2_fitness &&
-            Math.random() < config.elitist_prob) {
+            child_2_fitness < parent_2_fitness) {
           newPopulation.push(child_2);
         } else {
           // the child was worse than both parents so add the better parent
-          if (parent_1_fitness < parent_2_fitness) {
-            newPopulation.push(individual_1);
+          if (Math.random() < config.elitist_prob) {
+            if (parent_1_fitness < parent_2_fitness) {
+              newPopulation.push(individual_1);
+            } else {
+              newPopulation.push(individual_2);
+            }
           } else {
-            newPopulation.push(individual_2);
+            newPopulation.push(child_2);
           }
         }
 
@@ -435,6 +504,18 @@ module.exports = {
       }
     }
     return {individual, bestFitness};
+  },
+  getTheWorst: function(currentPopulation, domain, mapping, initialState, goalState) {
+    let worstFitness = -Infinity;
+    let individual;
+    for (var i = 0; i<currentPopulation.length; i++) {
+      let currentFitness = getFitness(currentPopulation[i], domain, mapping, initialState, goalState);
+      if (worstFitness < currentFitness) {
+        worstFitness = currentFitness;
+        individual = currentPopulation[i];
+      }
+    }
+    return {individual, worstFitness};
   },
   printFitness: function(chromosome, domain, mapping, initialState, goalState) {
     printFitness(chromosome, domain, mapping, initialState, goalState);

@@ -375,6 +375,70 @@ module.exports = {
   getActualParameters: function(parameters, currentParameters) {
     return getActualParameters(parameters, currentParameters);
   },
+  getDifferentQuarters(chromosome) {
+    const N = config.grid_col_row;
+    let quarters = [0, 0, 0, 0];
+    let number_dif_quarters = 0;
+    for (let i = 0; i < chromosome.length; i++) {
+        let currentAction = chromosome[i][0];
+        if (currentAction === 'move'){
+          let currentParameters = chromosome[i][1];
+          for (let j = 1; j < currentParameters.length; j++){
+            let pos = Number(currentParameters[j].substring(1), 10);
+            if (pos < (N*N/2)){
+              if (pos % N <= N/2){
+                quarters[0] += 1;
+              }
+              else{
+                quarters[1] += 1;
+              }
+            }
+            else{
+              if (pos % N <= N/2){
+                quarters[2] += 1;
+              }
+              else{
+                quarters[3] += 1;
+              }
+            }
+          } 
+        }
+    }
+    for (let i = 0; i < quarters.length; i++) {
+      if (quarters[i] > 0){ number_dif_quarters++; }
+    }
+    return number_dif_quarters;
+  },
+  getMaxTimesQuarter(chromosome) {
+    const N = config.grid_col_row;
+    let quarters = [0, 0, 0, 0];
+    for (let i = 0; i < chromosome.length; i++) {
+        let currentAction = chromosome[i][0];
+        if (currentAction === 'move'){
+          let currentParameters = chromosome[i][1];
+          for (let j = 1; j < currentParameters.length; j++){
+            let pos = Number(currentParameters[j].substring(1), 10);
+            if (pos < (N*N/2)){
+              if (pos % N <= N/2){
+                quarters[0] += 1;
+              }
+              else{
+                quarters[1] += 1;
+              }
+            }
+            else{
+              if (pos % N <= N/2){
+                quarters[2] += 1;
+              }
+              else{
+                quarters[3] += 1;
+              }
+            }
+          } 
+        }
+    }
+    return Math.max(...quarters);
+  },
   updateCurrentState: function(arg) {
     return updateCurrentState(arg);
   }

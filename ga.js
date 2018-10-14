@@ -282,6 +282,8 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     }
     let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
     let sameMoves = fitnessFunction.countSameMoves(chromosome);
+    let differentQuarters = fitnessFunction.getDifferentQuarters(chromosome);
+    let maxTimeQuarter = fitnessFunction.getMaxTimesQuarter(chromosome);
     var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
                   config.conflict_actions_pound * numberOfInvalidActions +
                   config.first_conflict_position_pound * sizeBeforeConflict +
@@ -289,7 +291,9 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
                   config.best_subseq_pound * getBestSequenceSize +
                   config.collision_final_action_pound * collisionsAtEnd+
                   config.different_actions_pound * differentActions +
-                  config.repeating_actions_pound * sameMoves;
+                  config.repeating_actions_pound * sameMoves+
+                  config.different_quarters_pound * differentQuarters+
+                  config.max_time_quarters_pound * maxTimeQuarter;
 
     fitnesses[chromosomeKey] = fitness;
   }

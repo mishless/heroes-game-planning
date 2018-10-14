@@ -6,7 +6,7 @@ const fs = require("fs");
 const config = require("./config.json");
 // Load the domain and problem.
 
-const PROBLEM = mapGenerator.generate(config.different_quarters_pound, config.different_quarters_pound, 0, [1]);
+const PROBLEM = mapGenerator.generate(config.grid_col_row, config.grid_col_row, 0, [1]);
 
 fs.writeFile("./hero_problem.pddl", PROBLEM, err => {
   if (err) {

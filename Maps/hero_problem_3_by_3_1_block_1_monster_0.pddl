@@ -1,0 +1,26 @@
+(define (problem hero-problem) 
+(:domain heroes-world) 
+(:objects p0 p1 p2 p3 p5 p6 p7 p8  - location 
+h - hero 
+m00  - m0 
+w0 - w0 
+) 
+(:init (at h p1) (at m00 p3) (guarded p3) 
+(at w0 p0) 
+(adjacent p0 p3) 
+(adjacent p0 p1) 
+(adjacent p1 p0) 
+(adjacent p1 p2) 
+(adjacent p2 p5) 
+(adjacent p2 p1) 
+(adjacent p3 p0) 
+(adjacent p3 p6) 
+(adjacent p5 p2) 
+(adjacent p5 p8) 
+(adjacent p6 p3) 
+(adjacent p6 p7) 
+(adjacent p7 p6) 
+(adjacent p7 p8) 
+(adjacent p8 p5) 
+(adjacent p8 p7) 
+) (:goal (and (has-castle p3) )))

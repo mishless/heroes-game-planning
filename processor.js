@@ -5,7 +5,7 @@ const FF = require("./fitness_function");
 const fs = require("fs");
 const config = require("./config.json");
 // Load the domain and problem.
-
+/*
 const PROBLEM = mapGenerator.generate(config.grid_col_row, config.grid_col_row, 3, [1, 1, 1, 1, 1]);
 
 fs.writeFile("./hero_problem.pddl" , PROBLEM, err => {
@@ -13,12 +13,12 @@ fs.writeFile("./hero_problem.pddl" , PROBLEM, err => {
     return console.log(err);
   }
   console.log("The file was saved!");
-});
+});*/
 
-
+var start = new Date().getTime();
 strips.load(
-  "./hero_domain_final.pddl",
-  "./hero_problem.pddl",
+  "./Maps/hero_domain_5_by_5_3_monsters.pddl",
+  "./Maps/hero_problem_5_by_5_3_blocks_3_monsters_0.pddl",
   (domain, problem) => {
     // Get encoding for GA
     var mapping = GA.encode(domain, problem);
@@ -49,6 +49,8 @@ strips.load(
       if (i % 10 === 0) {
         GA.cleanLoops(initialPopulation);
       }
+      var end = new Date().getTime();
+      console.log("Time (ms): "+(end - start));
     }
   }
 );

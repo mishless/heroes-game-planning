@@ -1,7 +1,7 @@
 var strips = require('strips');
 var mapGenerator = require('./map_generator')
 var fs = require('fs');
-strips.verbose = true;
+// strips.verbose = true;
 
 // Load the domain and problem.
 /*
@@ -12,8 +12,9 @@ fs.writeFile("./hero_problem.pddl", problem, function(err) {
     }
 });*/
 
-strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, problem) {
-    var solutions = strips.solve(domain, problem, isDepthFirstSearch = false);
+var start = new Date().getTime();
+strips.load('../Maps/hero_domain_5_by_5_3_monsters.pddl', '../Maps/hero_problem_5_by_5_3_blocks_3_monsters_1.pddl', function(domain, problem) {
+    var solutions = strips.solve(domain, problem, isDepthFirstSearch = true);
     var solution = solutions[0];
     if (solution === undefined){
         console.log("No possible solution for this grid.");
@@ -23,6 +24,8 @@ strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, 
         for (var i = 0; i < solution.path.length; i++) {
             console.log((i + 1) + '. ' + solution.path[i]);
         }
+        var end = new Date().getTime();
+        console.log("time (ms): "+(end-start));
     }
 });
 

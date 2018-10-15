@@ -78,14 +78,7 @@ let cleanLoops = function(generation) {
                 stack.push(chromosome[i][1][1]);
                 let index = stack.indexOf(chromosome[i][1][2]);
                 if (index >= 0) {
-                //  console.log(i - stack.length + index + 1);
-                //  console.log(stack.length - index);
-                // console.log(stack);
-                // console.log(chromosome);
                   chromosome.splice(i - stack.length + index + 1, stack.length - index);
-
-                  //console.log(chromosome);
-                  // console.log(chromosome);
                   restart = true;
                   break loop1;
                 }
@@ -384,12 +377,13 @@ let crossover = function(chromosome_1, chromosome_2, domain, mapping, initialSta
 };
 
 let getFitness = function(chromosome, domain, mapping, initialState, goalState) {
-  var chromosomeKey = JSON.stringify(chromosome)
+  var chromosomeKey = JSON.stringify(chromosome);
   if (chromosomeKey in fitnesses) {
     var fitness = fitnesses[chromosomeKey];
   } else {
-    let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
-    let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
+    let result = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
+    let numberOfPreconditionsNotSatisfied = result.preconditions;
+    let numberOfInvalidActions = result.actions;
     let sizeBeforeConflict;
     if (chromosomeKey in firstConflict) {
       sizeBeforeConflict = firstConflict[chromosomeKey];
@@ -398,7 +392,7 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
       sizeBeforeConflict = firstConflict[chromosomeKey];
     }
     let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome, config.maximum_size_that_will_be_considered_in_pound);
-    let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
+    //let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
     let collisionsAtEnd = 0;
     if (numberOfInvalidActions == 0) {
       collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
@@ -411,7 +405,7 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
                   config.conflict_actions_pound * numberOfInvalidActions +
                   config.first_conflict_position_pound * sizeBeforeConflict +
                   config.chrom_size_pound * chromosomeSize +
-                  config.best_subseq_pound * getBestSequenceSize +
+                  //config.best_subseq_pound * getBestSequenceSize +
                   config.collision_final_action_pound * collisionsAtEnd+
                   config.different_actions_pound * differentActions;
                   //config.repeating_actions_pound * sameMoves;
@@ -419,39 +413,54 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
                   //config.max_time_quarters_pound * maxTimeQuarter;
     fitnesses[chromosomeKey] = fitness;
   }
+  return fitness;
+};
 
+let getFitnessValue = function(chromosome, domain, mapping, initialState, goalState) {
+  var chromosomeKey = JSON.stringify(chromosome);
+  if (chromosomeKey in fitnesses) {
+    var fitness = fitnesses[chromosomeKey];
+  }
   return fitness;
 };
 
 let printFitness = function(chromosome, domain, mapping, initialState, goalState) {
-  let numberOfPreconditionsNotSatisfied = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
-  let numberOfInvalidActions = fitnessFunction.getNumberOfInvalidActions(domain, mapping, chromosome, initialState);
-  let sizeBeforeConflict = fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+  var chromosomeKey = JSON.stringify(chromosome);
+  let result = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
+  let numberOfPreconditionsNotSatisfied = result.preconditions;
+  let numberOfInvalidActions = result.actions;
+  let sizeBeforeConflict;
+  if (chromosomeKey in firstConflict) {
+    sizeBeforeConflict = firstConflict[chromosomeKey];
+  } else {
+    firstConflict[chromosomeKey]= fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+    sizeBeforeConflict = firstConflict[chromosomeKey];
+  }
   let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome, config.maximum_size_that_will_be_considered_in_pound);
-  let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
+  //let getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
   let collisionsAtEnd = 0;
   if (numberOfInvalidActions == 0) {
     collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
   }
   let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
-  let sameMoves = fitnessFunction.countSameMoves(chromosome);
+  //let sameMoves = fitnessFunction.countSameMoves(chromosome);
   console.log("-----------------------------------------------------------------------")
   console.log(chromosome);
   console.log("numberOfPreconditionsNotSatisfied: " + numberOfPreconditionsNotSatisfied);
   console.log("numberOfInvalidActions: " + numberOfInvalidActions);
   console.log("sizeBeforeConflict: " + sizeBeforeConflict);
   console.log("chromosomeSize: " + chromosomeSize);
-  console.log("getBestSequenceSize: " + getBestSequenceSize);
+  //console.log("getBestSequenceSize: " + getBestSequenceSize);
   console.log("collisionsAtEnd: " + collisionsAtEnd);
   console.log("differentActions: " + differentActions);
-  console.log("sameMoves: " + sameMoves);
+  //console.log("sameMoves: " + sameMoves);
   console.log("-----------------------------------------------------------------------");
   var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
                 config.conflict_actions_pound * numberOfInvalidActions +
                 config.first_conflict_position_pound * sizeBeforeConflict +
                 config.chrom_size_pound * chromosomeSize +
-                config.best_subseq_pound * getBestSequenceSize +
-                config.collision_final_action_pound * collisionsAtEnd+
+                //config.best_subseq_pound * getBestSequenceSize +
+                config.collision_final_action_pound * collisionsAtEnd +
                 config.different_actions_pound * differentActions;
   return fitness;
 };
@@ -608,7 +617,7 @@ module.exports = {
 
         if (child_1_fitness < parent_1_fitness &&
             child_1_fitness < parent_2_fitness) {
-          newPopulation.push(child_1);
+            newPopulation.push(child_1);
         } else {
           // the child was worse than both parents so add the better parent
           if (Math.random() < config.elitist_prob) {

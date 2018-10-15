@@ -102,6 +102,7 @@ module.exports = {
         let state = cloneObject(currentState);
         let numberOfPreconditionsNotSatisfied = 0;
         let numberOfPreconditions = 0;
+        let numberOfInvalidActions = 0;
         //  console.log(chromosome);
         for (let i = 0; i < chromosome.length; i++) {
             let currentAction = chromosome[i][0];
@@ -141,9 +142,11 @@ module.exports = {
                     actualParameters,
                     currentState: state,
                 });
+            } else {
+              numberOfInvalidActions++;
             }
         }
-        return numberOfPreconditionsNotSatisfied / numberOfPreconditions;
+        return {'preconditions': numberOfPreconditionsNotSatisfied / numberOfPreconditions, 'actions': numberOfInvalidActions / chromosome.length};
     },
     getNumberOfInvalidActions(domain, mapping, chromosome, currentState) {
         let state = cloneObject(currentState);

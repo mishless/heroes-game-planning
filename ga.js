@@ -1,6 +1,8 @@
 let config = require("./config.json");
 let fitnessFunction = require('./fitness_function.js');
 let strips = require('strips');
+const seedrandom = require('seedrandom');
+const rng = seedrandom();
 
 let fitnesses = {};
 var firstConflict = {};
@@ -100,7 +102,7 @@ let cleanLoops = function(generation) {
 let getGeneValidActionFromState = function(domain, state, getValidActions) {
   let validActions = getValidActions(domain, state);
   if (validActions.length > 0) {
-    let randomValidAction = Math.floor(Math.random() * validActions.length);
+    let randomValidAction = Math.floor(rng() * validActions.length);
     let randomValidActionParameters = [];
     for (let parameter in validActions[randomValidAction].map) {
       randomValidActionParameters.push(
@@ -114,7 +116,7 @@ let getGeneValidActionFromState = function(domain, state, getValidActions) {
 
 let randomProperty = function(obj) {
   const keys = Object.keys(obj);
-  return keys[(keys.length * Math.random()) << 0];
+  return keys[(keys.length * rng()) << 0];
 };
 
 let selectBest = function(population, domain, mapping, initialState, goalState) {
@@ -145,12 +147,12 @@ let select = function(population, domain, mapping, initialState, goalState) {
   const N = config.tournament_size;
 
   let bestIndividual =
-    population[Math.floor(Math.random() * population.length)];
+    population[Math.floor(rng() * population.length)];
   let bestFitness = getFitness(bestIndividual, domain, mapping, initialState, goalState);
 
   for (let i = 0; i < N; i++) {
     const individual =
-      population[Math.floor(Math.random() * population.length)];
+      population[Math.floor(rng() * population.length)];
     const fitness = getFitness(individual, domain, mapping, initialState, goalState);
 
     if (fitness < bestFitness) {
@@ -168,7 +170,7 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
   const replaceProb = config.mutation_replace_prob;
   const paramProb = config.mutation_param_prob;
   // maybe add heuristic mutation?
-  if (Math.random() <= growthProb) {
+  if (rng() <= growthProb) {
     // generate random index to add action to
     var index;
     let sizeBeforeConflict;
@@ -180,9 +182,9 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
       sizeBeforeConflict = firstConflict[chromosomeKey];
     }
     let newAction = 0;
-    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+    if (rng() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
       index = sizeBeforeConflict;
-      if (Math.random() < config.generate_random_valid_move) {
+      if (rng() < config.generate_random_valid_move) {
         var copyOfChromosome = cloneObject(chromosome);
         copyOfChromosome.splice(index);
         newAction = newRandomValidAction(domain, mapping, copyOfChromosome, initialState);
@@ -190,7 +192,7 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
         newAction = newRandomAction(mapping);
       }
     } else {
-      index = Math.floor(Math.random() * chromosome.length);
+      index = Math.floor(rng() * chromosome.length);
       newAction = newRandomAction(mapping);
     }
     // insert the random action into the chromosome
@@ -217,13 +219,13 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
     if (copyOfChromosomeFitness < chromosomeFitness) {
       chromosome = copyOfChromosome;
     } else {
-      if (Math.random() > config.elitist_mutate_prob) {
+      if (rng() > config.elitist_mutate_prob) {
         chromosome = copyOfChromosome;
       }
     }
   }
 
-  if (Math.random() <= shrinkProb && chromosome.length > 3) {
+  if (rng() <= shrinkProb && chromosome.length > 3) {
     // generate random index to remove action from
     var index;
     let sizeBeforeConflict;
@@ -234,10 +236,10 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
       firstConflict[chromosomeKey]= fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
       sizeBeforeConflict = firstConflict[chromosomeKey];
     }
-    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+    if (rng() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
       index = sizeBeforeConflict;
     } else {
-      index = Math.floor(Math.random() * chromosome.length);
+      index = Math.floor(rng() * chromosome.length);
     }
     // remove action at specified index
     let copyOfChromosome = cloneObject(chromosome);
@@ -261,13 +263,13 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
     if (childChromosomeFitness < parentFitness) {
       chromosome = copyOfChromosome;
     } else {
-      if (Math.random() > config.elitist_mutate_prob) {
+      if (rng() > config.elitist_mutate_prob) {
         chromosome = copyOfChromosome;
       }
     }
   }
 
-  if (Math.random() <= swapProb) {
+  if (rng() <= swapProb) {
     // generate random indices to swap
     var index_1;
     let sizeBeforeConflict;
@@ -278,12 +280,12 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
       firstConflict[chromosomeKey]= fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
       sizeBeforeConflict = firstConflict[chromosomeKey];
     }
-    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+    if (rng() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
       index_1 = sizeBeforeConflict;
     } else {
-      index_1 = Math.floor(Math.random() * chromosome.length);
+      index_1 = Math.floor(rng() * chromosome.length);
     }
-    const index_2 = Math.floor(Math.random() * chromosome.length);
+    const index_2 = Math.floor(rng() * chromosome.length);
     // swap the actions
     const action_1 = chromosome[index_1];
     const action_2 = chromosome[index_2];
@@ -291,7 +293,7 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
     chromosome[index_2] = action_1;
   }
 
-  if (Math.random() <= replaceProb) {
+  if (rng() <= replaceProb) {
     // generate random index to replace
     var index;
     let sizeBeforeConflict;
@@ -303,9 +305,9 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
       sizeBeforeConflict = firstConflict[chromosomeKey];
     }
     let newAction;
-    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+    if (rng() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
       index = sizeBeforeConflict;
-      if (Math.random() < config.generate_random_valid_move) {
+      if (rng() < config.generate_random_valid_move) {
         var copyOfChromosome = cloneObject(chromosome);
         copyOfChromosome.splice(index);
         newAction = newRandomValidAction(domain, mapping, copyOfChromosome, initialState);
@@ -313,13 +315,13 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
         newAction = newRandomAction(mapping);
       }
     } else {
-      index = Math.floor(Math.random() * chromosome.length);
+      index = Math.floor(rng() * chromosome.length);
       newAction = newRandomAction(mapping);
     }
     chromosome[index] = newAction;
   }
 
-  if (Math.random() <= paramProb) {
+  if (rng() <= paramProb) {
     // generate random index to mutate
     let actionIndex;
     let sizeBeforeConflict;
@@ -330,10 +332,10 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
       firstConflict[chromosomeKey]= fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
       sizeBeforeConflict = firstConflict[chromosomeKey];
     }
-    if (Math.random() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
+    if (rng() < config.mutate_from_conflict_prob && sizeBeforeConflict < chromosome.length) {
       actionIndex = sizeBeforeConflict;
     } else {
-      actionIndex = Math.floor(Math.random() * chromosome.length);
+      actionIndex = Math.floor(rng() * chromosome.length);
     }
     //console.log(chromosome.length);
     do {
@@ -341,16 +343,16 @@ let mutate = function(mapping, chromosome, domain, initialState, goalState) {
       const parameterInstances = chromosome[actionIndex][1];
       // generate random index of parameter
       const action = chromosome[actionIndex][0];
-      const randomParameter = Math.floor(Math.random() * parameterInstances.length);
+      const randomParameter = Math.floor(rng() * parameterInstances.length);
       // get a new property of the same type
       const positionalArgument =  Object.keys(mapping.actions[action].parameters)[randomParameter];
       const paramType = mapping.actions[action].parameters[positionalArgument];
 
-      const randomInstance = Math.floor(Math.random() * mapping.instances[paramType].length);
+      const randomInstance = Math.floor(rng() * mapping.instances[paramType].length);
       const newInstance = mapping.instances[paramType][randomInstance];
       // replace the old property with the new property
       chromosome[actionIndex][1][randomParameter] = newInstance;
-    } while (Math.random() < config.mutate_more_than_one_parameter)
+    } while (rng() < config.mutate_more_than_one_parameter)
   }
   return chromosome;
 };
@@ -362,10 +364,10 @@ let crossover = function(chromosome_1, chromosome_2, domain, mapping, initialSta
   let shorterChromosome = copyOfFirstChromosome.length < copyOfSecondChromosome.length ? copyOfFirstChromosome : copyOfSecondChromosome;
   var index = 0;
 
-  if (Math.random() < config.crossover_from_conflict_prob) {
+  if (rng() < config.crossover_from_conflict_prob) {
     index = fitnessFunction.getIndexBestCut(domain, mapping, shorterChromosome, initialState) - 1;
   } else {
-    index = Math.floor(Math.random() * shorterChromosome.length);
+    index = Math.floor(rng() * shorterChromosome.length);
   }
 
   const lastPartChromosome1 = copyOfFirstChromosome.splice(index);
@@ -572,7 +574,7 @@ module.exports = {
       var individual_1 = cloneObject(select(currentPopulation, domain, mapping, initialState, goalState));
       var individual_2 = cloneObject(select(currentPopulation, domain, mapping, initialState, goalState));
 
-      if (Math.random() > config.crossover_prob) {
+      if (rng() > config.crossover_prob) {
         const children = crossover(individual_1, individual_2, domain, mapping, initialState);
         var child_1 = children[0];
         var child_2 = children[1];
@@ -620,7 +622,7 @@ module.exports = {
             newPopulation.push(child_1);
         } else {
           // the child was worse than both parents so add the better parent
-          if (Math.random() < config.elitist_prob) {
+          if (rng() < config.elitist_prob) {
             if (parent_1_fitness < parent_2_fitness) {
               newPopulation.push(individual_1);
             } else {
@@ -636,7 +638,7 @@ module.exports = {
           newPopulation.push(child_2);
         } else {
           // the child was worse than both parents so add the better parent
-          if (Math.random() < config.elitist_prob) {
+          if (rng() < config.elitist_prob) {
             if (parent_1_fitness < parent_2_fitness) {
               newPopulation.push(individual_1);
             } else {

@@ -1,3 +1,5 @@
+const seedrandom = require('seedrandom');
+const rng = seedrandom();
 module.exports = {
   generate: function (height, width, blockedCells, numberOfMonstersPerType) {
     const finalGrid = [];
@@ -8,7 +10,7 @@ module.exports = {
     for (let i = 0; i < blockedCells; i++) {
       let newBlockIndex;
       do {
-         newBlockIndex = Math.floor(Math.random() * numberOfCells);
+         newBlockIndex = Math.floor(rng() * numberOfCells);
       } while (indexesOfBlockedCells.indexOf(newBlockIndex) >= 0);
       indexesOfBlockedCells[i] = newBlockIndex;
       finalGrid[newBlockIndex] = "B";
@@ -29,12 +31,12 @@ module.exports = {
       monsterIndexes.push([]);
       for (let j = 0; j < numberOfMonstersPerType[i]; j++) {
         problem += `m${i}${j} `;
-        const newMonsterIndex = Math.floor(Math.random() * possibleLocations.length);
+        const newMonsterIndex = Math.floor(rng() * possibleLocations.length);
         monsterIndexes[i].push(possibleLocations[newMonsterIndex]);
         finalGrid[possibleLocations[newMonsterIndex].substring(1)] = `M${i}${j}`;
         possibleLocations.splice(newMonsterIndex, 1);
       }
-      const newWeaponIndex = Math.floor(Math.random() * possibleLocations.length);
+      const newWeaponIndex = Math.floor(rng() * possibleLocations.length);
       weaponIndexes.push(possibleLocations[newWeaponIndex]);
       finalGrid[possibleLocations[newWeaponIndex].substring(1)] = `W${i}`;
       possibleLocations.splice(newWeaponIndex, 1);

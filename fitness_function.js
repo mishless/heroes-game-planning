@@ -1,6 +1,8 @@
 const strips = require("strips");
 const R = require("ramda");
 const config = require("./config.json");
+const seedrandom = require('seedrandom');
+const rng = seedrandom();
 
 // This is how you deep clone in JavaScript
 const cloneObject = object => JSON.parse(JSON.stringify(object));
@@ -135,7 +137,7 @@ module.exports = {
                     preconditionsAreSatisfied = false;
                 }
             });
-            if (preconditionsAreSatisfied || Math.random() < config.apply_invalid_action) {
+            if (preconditionsAreSatisfied || rng() < config.apply_invalid_action) {
                 state = updateCurrentState({
                     domainActions: domain.actions,
                     currentAction,
@@ -177,7 +179,7 @@ module.exports = {
             if (!preconditionsAreSatisfied) {
                 numberOfInvalidActions++;
             }
-            if (preconditionsAreSatisfied || Math.random() < config.apply_invalid_action) {
+            if (preconditionsAreSatisfied || rng() < config.apply_invalid_action) {
                 state = updateCurrentState({
                     domainActions: domain.actions,
                     currentAction,
@@ -212,16 +214,16 @@ module.exports = {
                 preconditions
             );
             if (!preconditionsAreSatisfied) {
-      		return sizeBeforeConflict;
+      		      return sizeBeforeConflict;
             } else {
-		sizeBeforeConflict++;
-		state = updateCurrentState({
-			domainActions: domain.actions,
-			currentAction,
-			actualParameters,
-			currentState: state,
-		    });
-		}
+            		sizeBeforeConflict++;
+            		state = updateCurrentState({
+            			domainActions: domain.actions,
+            			currentAction,
+            			actualParameters,
+            			currentState: state,
+            		    });
+      		}
 	    }
 	    return sizeBeforeConflict;
 	},
@@ -254,15 +256,14 @@ module.exports = {
           if (!preconditionsAreSatisfied) {
       		    sequenceSize.push(sizeUntillConflict);
 			        sizeUntillConflict = 0;
-          }
-    	  else {
-		sizeUntillConflict++;
-		state = updateCurrentState({
-			domainActions: domain.actions,
-			currentAction,
-			actualParameters,
-			currentState: state,
-		    });
+          } else {
+      		sizeUntillConflict++;
+      		state = updateCurrentState({
+      			domainActions: domain.actions,
+      			currentAction,
+      			actualParameters,
+      			currentState: state,
+      		    });
 		}
 	    }
       if (sequenceSize.length === 0) {
@@ -362,7 +363,7 @@ module.exports = {
         if (!preconditionsAreSatisfied) {
             // Here we can add logic what to do when the preconditions are not met
         }
-        if (preconditionsAreSatisfied || Math.random() < config.apply_invalid_action) {
+        if (preconditionsAreSatisfied || rng() < config.apply_invalid_action) {
             state = updateCurrentState({
                 domainActions: domain.actions,
                 currentAction,

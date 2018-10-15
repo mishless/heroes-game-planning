@@ -44,8 +44,10 @@ strips.load(
       console.log("Generation " + i);
       initialPopulation = GA.generateNewPopulation(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
       let test = GA.getTheFittest(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
-      GA.printFitness(test.individual, domain, mapping, problem.states[0], problem.states[1]);
+      console.log("----------------------------------------");
+      console.log(test.individual);
       console.log(test.bestFitness);
+      console.log("----------------------------------------");
       if (i % 10 === 0) {
         GA.cleanLoops(initialPopulation);
       }

@@ -257,17 +257,17 @@ module.exports = {
       		    sequenceSize.push(sizeUntillConflict);
 			        sizeUntillConflict = 0;
           } else {
-      		sizeUntillConflict++;
-      		state = updateCurrentState({
-      			domainActions: domain.actions,
-      			currentAction,
-      			actualParameters,
-      			currentState: state,
+          		sizeUntillConflict++;
+          		state = updateCurrentState({
+          			domainActions: domain.actions,
+          			currentAction,
+          			actualParameters,
+          			currentState: state,
       		    });
 		}
 	    }
       if (sequenceSize.length === 0) {
-        return 0;
+        return 1;
       }
 	    return Math.max(...sequenceSize) / chromosome.length;
 	},

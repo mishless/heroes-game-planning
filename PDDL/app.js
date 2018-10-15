@@ -1,0 +1,28 @@
+var strips = require('strips');
+var mapGenerator = require('./map_generator')
+var fs = require('fs');
+strips.verbose = true;
+
+// Load the domain and problem.
+/*
+problem = mapGenerator.generate(5, 5, 4, [1, 1, 1, 1, 1]);
+fs.writeFile("./hero_problem.pddl", problem, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+});*/
+
+strips.load('./hero_domain_final.pddl', './hero_problem.pddl', function(domain, problem) {
+    var solutions = strips.solve(domain, problem, isDepthFirstSearch = false);
+    var solution = solutions[0];
+    if (solution === undefined){
+        console.log("No possible solution for this grid.");
+    }
+    else{
+        console.log('- Solution found in ' + solution.steps + ' steps!');
+        for (var i = 0; i < solution.path.length; i++) {
+            console.log((i + 1) + '. ' + solution.path[i]);
+        }
+    }
+});
+

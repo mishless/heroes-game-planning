@@ -1,0 +1,54 @@
+GRID:
+	H		p1		p2		B		p4	
+	B		B		p7		B		p9	
+	p10		p11		p12		B		p14	
+	p15		B		p17		p18		p19	
+	B		p21		p22		M11		W1	
+	M00		p26		p27		W0		p29	
+	p30		M10		B		p33		p34	
+
+A*:
+- Solution found in 23 steps!
+1. move h p0 p1
+2. move h p1 p2
+3. move h p2 p7
+4. move h p7 p12
+5. move h p12 p17
+6. move h p17 p22
+7. move h p22 p27
+8. move h p27 p28
+9. collect-w0 h w0 p28
+10. move h p28 p27
+11. move h p27 p26
+12. kill-m0 h m00 p26 p25
+13. move h p25 p26
+14. move h p26 p27
+15. move h p27 p28
+16. move h p28 p29
+17. move h p29 p24
+18. collect-w1 h w1 p24
+19. kill-m1 h m11 p24 p23
+20. move h p23 p28
+21. move h p28 p27
+22. move h p27 p26
+23. kill-m1 h m10 p26 p31
+
+BFS:
+- Solution found in 17 steps!
+1. move h p0 p1
+2. move h p1 p2
+3. move h p2 p7
+4. move h p7 p12
+5. move h p12 p17
+6. move h p17 p18
+7. move h p18 p19
+8. move h p19 p24
+9. collect-w1 h w1 p24
+10. kill-m1 h m11 p24 p23
+11. move h p23 p28
+12. collect-w0 h w0 p28
+13. move h p28 p27
+14. move h p27 p26
+15. kill-m0 h m00 p26 p25
+16. move h p25 p26
+17. kill-m1 h m10 p26 p31

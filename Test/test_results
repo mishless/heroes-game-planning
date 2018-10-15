@@ -1,0 +1,906 @@
+Case 1:
+----------------------------------
+Map 3x3 1 block 1 monster #1
+----------------------------------
+W0              H               p2
+M00             B               p5
+p6              p7              p8
+
+Try 1:
+- first solution:
+Generation 604
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 6
+chromosomeSize: 0.2
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -6.802
+Time (ms): 562789
+
+- No more improvements for all 1000 gen
+
+Try 2:
+- first solution:
+Generation 817
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p6' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 10
+chromosomeSize: 0.3333333333333333
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -7.6033333333333335
+Time (ms): 689546
+
+- improvement:
+Generation 818
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p6' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p7' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 11
+chromosomeSize: 0.36666666666666664
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -7.8036666666666665
+Time (ms): 690939
+
+- no more improvements for the 1000 gen.
+
+Try 3:
+- first solution:
+Generation 360
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p6' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p6', 'p3' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 9
+chromosomeSize: 0.3
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -7.4030000000000005
+Time (ms): 290453
+
+- no more improvements for the 1000 gen.
+
+Try 4:
+- first solution:
+Generation 218
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 13
+chromosomeSize: 0.43333333333333335
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 3
+-----------------------------------------------------------------------
+Fitness: -8.204333333333333
+Time (ms): 309745
+
+- improvement:
+Generation 219
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p6' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 14
+chromosomeSize: 0.4666666666666667
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 2
+-----------------------------------------------------------------------
+Fitness: -8.404666666666667
+Time (ms): 310999
+
+- improvement:
+Generation 221
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 5
+chromosomeSize: 0.16666666666666666
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -6.601666666666667
+Time (ms): 313112
+
+- no more improvements for the 1000 gen.
+
+Try 5:
+- first solution:
+Generation 58
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 6
+chromosomeSize: 0.2
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 2
+-----------------------------------------------------------------------
+Fitness: -6.802
+Time (ms): 52930
+
+- improvement:
+Generation 61
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p0' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 4
+chromosomeSize: 0.13333333333333333
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -6.4013333333333335
+Time (ms): 55223
+
+- no more improvements for the 1000 gen.
+
+Case 2:
+----------------------------------
+Map 3x3 1 block 1 monster #2
+----------------------------------
+H               p1              p2
+W0              p4              p5
+p6              M00             B
+
+Try 1:
+- first solution:
+Generation 122
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 13
+chromosomeSize: 0.43333333333333335
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -8.204333333333333
+Time (ms): 194101
+
+- no more improvements for the 1000 gen.
+
+Try 2:
+- first solution:
+Generation 52
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 6
+chromosomeSize: 0.2
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -6.802
+Time (ms): 46231
+
+- improvement:
+Generation 90
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 7
+chromosomeSize: 0.23333333333333334
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -7.002333333333333
+Time (ms): 59978
+
+- no more improvements for the 1000 gen.
+
+Try 3:
+- first solution:
+Generation 157
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 10
+chromosomeSize: 0.3333333333333333
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -7.6033333333333335
+Time (ms): 208271
+
+- improvement:
+Generation 161
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 6
+chromosomeSize: 0.2
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -6.802
+Time (ms): 211014
+
+- no more improvements for the 1000 gen.
+
+Try 4:
+- first solution:
+Generation 90
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p6' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 7
+chromosomeSize: 0.23333333333333334
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -7.002333333333333
+Time (ms): 87848
+
+- improvement:
+Generation 911
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 6
+chromosomeSize: 0.2
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -6.802
+Time (ms): 240196
+
+- no more improvements for the 1000 gen.
+
+Try 5:
+- first solution:
+Generation 100
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 15
+chromosomeSize: 0.5
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -8.604999999999999
+Time (ms): 115499
+
+- improvement:
+Generation 101
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 11
+chromosomeSize: 0.36666666666666664
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -7.8036666666666665
+Time (ms): 117094
+
+- improvement:
+Generation 812
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p7' ] ],
+  [ 'move', [ 'h', 'p7', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 12
+chromosomeSize: 0.4
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 3
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -8.004
+Time (ms): 419356
+
+- no more improvements for the 1000 gen.
+
+Case 3:
+----------------------------------
+Map 3x3 1 block 2 monsters #1
+----------------------------------
+W1              H               M10
+p3              p4              M00
+W0              B               p8
+
+Try 1:
+- first solution:
+Generation 127
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p2' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 13
+chromosomeSize: 0.43333333333333335
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -13.604333333333333
+Time (ms): 185824
+
+- no more improvements for the 1000 gen.
+
+Try 2:
+- first solution:
+Generation 84
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 17
+chromosomeSize: 0.5666666666666667
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 2
+-----------------------------------------------------------------------
+Fitness: -14.405666666666667
+Time (ms): 181806
+
+- improvement:
+Generation 91
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 13
+chromosomeSize: 0.43333333333333335
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -13.604333333333333
+Time (ms): 195539
+
+- no more improvements for the 1000 gen.
+
+Try 3:
+- No solution. Best:
+Generation 999
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 12
+chromosomeSize: 0.4
+getBestSequenceSize: 0
+collisionsAtEnd: 1
+differentActions: 4
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -8.204
+Time (ms): 743021
+
+Try 4:
+- first solution:
+Generation 147
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p8' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 15
+chromosomeSize: 0.5
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 0
+-----------------------------------------------------------------------
+Fitness: -14.004999999999999
+Time (ms): 283105
+
+- no more improvements for the 1000 gen.
+
+Try 5:
+- first solution:
+Generation 163
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p4', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p8' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 17
+chromosomeSize: 0.5666666666666667
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -14.405666666666667
+Time (ms): 382267
+
+- no more improvements for the 1000 gen.
+
+Case 4:
+----------------------------------
+Map 3x3 1 block 2 monsters #2
+----------------------------------
+M00             W0              H
+p3              W1              p5
+p6              B               M10
+
+Try 1:
+- first solution:
+Generation 55
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p2' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 12
+chromosomeSize: 0.4
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 2
+-----------------------------------------------------------------------
+Fitness: -13.404
+Time (ms): 104831
+
+- no more improvements for 492 gen.
+
+Try 2:
+- first solution:
+Generation 92
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p3', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 12
+chromosomeSize: 0.4
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -13.404
+Time (ms): 165874
+
+- no more improvements for 247 gen.
+
+Try 3:
+- first solution:
+Generation 108
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p1', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 14
+chromosomeSize: 0.4666666666666667
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -13.804666666666666
+Time (ms): 178547
+
+- no more improvements for 543 gen.
+
+Try 4:
+- first solution:
+Generation 54
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p2', 'p1' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p1', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p8' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 12
+chromosomeSize: 0.4
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -13.404
+Time (ms): 85454
+
+- no more improvements for 411 gen.
+
+Try 5:
+- first solution:
+Generation 128
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p6' ] ],
+  [ 'move', [ 'h', 'p6', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 24
+chromosomeSize: 0.8
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 4
+-----------------------------------------------------------------------
+Fitness: -15.808
+Time (ms): 329245
+
+- improvement:
+Generation 131
+-----------------------------------------------------------------------
+[ [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'collect-w1', [ 'h', 'w1', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'collect-w0', [ 'h', 'w0', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'kill-m0', [ 'h', 'm00', 'p3', 'p0' ] ],
+  [ 'move', [ 'h', 'p0', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p1' ] ],
+  [ 'move', [ 'h', 'p1', 'p2' ] ],
+  [ 'move', [ 'h', 'p2', 'p5' ] ],
+  [ 'kill-m1', [ 'h', 'm10', 'p5', 'p8' ] ],
+  [ 'move', [ 'h', 'p8', 'p5' ] ],
+  [ 'move', [ 'h', 'p5', 'p4' ] ],
+  [ 'move', [ 'h', 'p4', 'p3' ] ],
+  [ 'move', [ 'h', 'p3', 'p0' ] ] ]
+numberOfPreconditionsNotSatisfied: 0
+numberOfInvalidActions: 0
+sizeBeforeConflict: 20
+chromosomeSize: 0.6666666666666666
+getBestSequenceSize: 0
+collisionsAtEnd: 2
+differentActions: 5
+sameMoves: 1
+-----------------------------------------------------------------------
+Fitness: -15.006666666666668
+Time (ms): 335842
+
+- no more improvements for 315 gen.

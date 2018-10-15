@@ -3,6 +3,7 @@ const R = require("ramda");
 const config = require("./config.json");
 const seedrandom = require('seedrandom');
 const rng = seedrandom();
+let stateApplyAction = {};
 
 // This is how you deep clone in JavaScript
 const cloneObject = object => JSON.parse(JSON.stringify(object));
@@ -44,6 +45,14 @@ const updateCurrentState = ({
    actualParameters,
    currentState
 }) => {
+    let currentActionString = JSON.stringify(currentAction);
+    let actualParametersString = JSON.stringify(actualParameters);
+    let currentStateString = JSON.stringify(currentState);
+    let key = currentActionString + actualParametersString + currentStateString;
+    if (key in stateApplyAction)  {
+      //console.log("WORKS");
+      return stateApplyAction[key];
+    }
     let actionToApply = domainActions.find(({
         action
     }) => action === currentAction);
@@ -56,11 +65,11 @@ const updateCurrentState = ({
         currentState,
         actionToApply
     );
-
-    return strips.applyAction(
+    stateApplyAction[key] = strips.applyAction(
         actionToApplyWithEffect,
         currentState
     );
+    return stateApplyAction[key];
 };
 
 // actualParameters is an object which keys are [parameters] and value is the currentParameter by index
@@ -105,7 +114,6 @@ module.exports = {
         let numberOfPreconditionsNotSatisfied = 0;
         let numberOfPreconditions = 0;
         let numberOfInvalidActions = 0;
-        //  console.log(chromosome);
         for (let i = 0; i < chromosome.length; i++) {
             let currentAction = chromosome[i][0];
             let currentParameters = chromosome[i][1];
@@ -175,7 +183,6 @@ module.exports = {
                 state,
                 preconditions
             );
-            //console.log(preconditions);
             if (!preconditionsAreSatisfied) {
                 numberOfInvalidActions++;
             }
@@ -188,7 +195,6 @@ module.exports = {
                 });
             }
         }
-        //console.log(numberOfInvalidActions);
         return numberOfInvalidActions / numberOfActions;
     },
     getSizeBeforeConflict(domain, mapping, chromosome, currentState) {
@@ -222,7 +228,7 @@ module.exports = {
             			currentAction,
             			actualParameters,
             			currentState: state,
-            		    });
+            		});
       		}
 	    }
 	    return sizeBeforeConflict;

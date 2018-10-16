@@ -13,8 +13,8 @@ fs.writeFile("./hero_problem.pddl", problem, function(err) {
 });*/
 
 var start = new Date().getTime();
-strips.load('../Maps/hero_domain_5_by_5_3_monsters.pddl', '../Maps/hero_problem_5_by_5_3_blocks_3_monsters_1.pddl', function(domain, problem) {
-    var solutions = strips.solve(domain, problem, isDepthFirstSearch = true);
+strips.load('../Maps/hero_domain_5_by_5_5_monsters.pddl', '../Maps/hero_problem_5_by_5_5_blocks_5_monsters_2.pddl', function(domain, problem) {
+    var solutions = strips.solve(domain, problem, isDepthFirstSearch = false);
     var solution = solutions[0];
     if (solution === undefined){
         console.log("No possible solution for this grid.");
@@ -28,4 +28,3 @@ strips.load('../Maps/hero_domain_5_by_5_3_monsters.pddl', '../Maps/hero_problem_
         console.log("time (ms): "+(end-start));
     }
 });
-

@@ -393,6 +393,7 @@ module.exports = {
     let state = cloneObject(currentState);
     let goalPreconditions = 0;
     let numberOfPreconditions = 1;
+    let length = 0;
     for (let i = 0; i < chromosome.length; i++) {
         let currentAction = chromosome[i][0];
         let currentParameters = chromosome[i][1];
@@ -417,7 +418,6 @@ module.exports = {
               preconditions
           );
           preconditionsAreSatisfiedMap[key] = preconditionsAreSatisfied;
-
         }
         if (!preconditionsAreSatisfied) {
             // Here we can add logic what to do when the preconditions are not met
@@ -432,9 +432,14 @@ module.exports = {
             let goalPreconditionsObject= getGoalPreconditions(state, goalState)
             goalPreconditions = goalPreconditionsObject.goalPreconditions;
             numberOfPreconditions = goalPreconditionsObject.goalActions;
+            if (goalPreconditions / numberOfPreconditions != 1) {
+                length++;
+            }
         }
     }
-    return goalPreconditions / numberOfPreconditions;
+    return {
+      'goalPreconditions': goalPreconditions / numberOfPreconditions,
+      'length': length};
   },
 
   getDifferentActions(domain, mapping, chromosome, currentState) {

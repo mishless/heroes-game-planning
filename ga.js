@@ -398,7 +398,9 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     if (config.best_subseq_pound > 0) {
       getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
     }
-    let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    let collisionsAtEndObject = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    let collisionsAtEnd = collisionsAtEndObject.goalPreconditions;
+    let length = collisionsAtEndObject.length;
     let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
     let sameMoves = 0;
     if (config.repeating_actions_pound > 0) {
@@ -452,7 +454,9 @@ let printFitness = function(chromosome, domain, mapping, initialState, goalState
     if (config.best_subseq_pound > 0) {
       getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
     }
-    let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    let collisionsAtEndObject = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    let collisionsAtEnd = collisionsAtEndObject.goalPreconditions;
+    let length = collisionsAtEndObject.length;
     let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
     let sameMoves = 0;
     if (config.repeating_actions_pound > 0) {
@@ -474,6 +478,7 @@ let printFitness = function(chromosome, domain, mapping, initialState, goalState
     console.log("chromosomeSize: " + chromosomeSize);
     console.log("getBestSequenceSize: " + getBestSequenceSize);
     console.log("collisionsAtEnd: " + collisionsAtEnd);
+    console.log("length: " + length);
     console.log("differentActions: " + differentActions);
     console.log("sameMoves: " + sameMoves);
     console.log("-----------------------------------------------------------------------");

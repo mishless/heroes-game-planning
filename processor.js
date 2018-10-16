@@ -21,9 +21,11 @@ fs.writeFile("./hero_problem.pddl" , PROBLEM, err => {
 
 var start = new Date().getTime();
 let results = {};
+
+const runLoader = async () => {
 for (let p=0; p<5; p++) {
   results[p] = {};
-  strips.load(
+  await new Promise(resolve => strips.load(
     "./Maps/hero_domain_3_by_3_1_monster.pddl",
     "./Maps/hero_problem_3_by_3_1_block_1_monster_"+p+".pddl",
     (domain, problem) => {
@@ -81,5 +83,9 @@ for (let p=0; p<5; p++) {
           console.log("Map # " + i + ": " + JSON.stringify(results[i]));
         }
       }
-    });
+        resolve()
+    }))
 }
+}
+
+runLoader();

@@ -19,7 +19,6 @@ fs.writeFile("./hero_problem.pddl" , PROBLEM, err => {
   console.log("The file was saved!");
 });*/
 
-var start = new Date().getTime();
 let results = {};
 for (let p=0; p<5; p++) {
   results[p] = {};
@@ -44,6 +43,7 @@ for (let p=0; p<5; p++) {
       let times = [];
       let lengths = [];
       for (let j = 0; j<5; j++) {
+        var start = new Date().getTime();
         for (let i=0; i<config.generations; i++) {
           initialPopulation = GA.generateNewPopulation(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
           let test = GA.getTheFittest(initialPopulation, domain, mapping, problem.states[0], problem.states[1]);
@@ -64,10 +64,10 @@ for (let p=0; p<5; p++) {
             GA.cleanLoops(initialPopulation);
           }
           var end = new Date().getTime();
-          times.push(end);
           //console.log("Time (ms): "+(end - start));
         }
-         let bestPath = Infinity;
+        times.push(end);
+        let bestPath = Infinity;
         for (let result in results[p]) {
           if (results[p][result].length < bestPath) {
             bestPath = results[p][result].length;

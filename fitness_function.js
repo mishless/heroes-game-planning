@@ -141,7 +141,7 @@ module.exports = {
                 let key = stateString + parameterizedPreconditionString;
                 let preconditionIsSatisfied;
                 if (key in preconditionsAreSatisfiedMap) {
-                  preconditionSatisfied = preconditionsAreSatisfiedMap[key];
+                  preconditionIsSatisfied = preconditionsAreSatisfiedMap[key];
                 } else {
                   preconditionIsSatisfied = strips.isPreconditionSatisfied(
                       state,
@@ -448,7 +448,7 @@ module.exports = {
       		number_dif_actions++;
       	}
     }
-    return number_dif_actions;
+    return number_dif_actions / Object.keys(mapping.actions).length;
   },
   getActualParameters: function(parameters, currentParameters) {
     return getActualParameters(parameters, currentParameters);

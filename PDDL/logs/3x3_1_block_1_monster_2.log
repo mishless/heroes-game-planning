@@ -1,0 +1,5 @@
+- Solution found in 3 steps!
+1. move h p0 p1
+2. collect-w0 h w0 p1
+3. kill-m0 h m00 p1 p2
+time (ms): 150

@@ -398,10 +398,7 @@ let getFitness = function(chromosome, domain, mapping, initialState, goalState) 
     if (config.best_subseq_pound > 0) {
       getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
     }
-    let collisionsAtEnd = 0;
-    if (numberOfInvalidActions == 0) {
-      collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
-    }
+    let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
     let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
     let sameMoves = 0;
     if (config.repeating_actions_pound > 0) {
@@ -440,49 +437,56 @@ let getFitnessValue = function(chromosome, domain, mapping, initialState, goalSt
 
 let printFitness = function(chromosome, domain, mapping, initialState, goalState) {
     var chromosomeKey = JSON.stringify(chromosome);
-
-      let result = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
-      let numberOfPreconditionsNotSatisfied = result.preconditions;
-      let numberOfInvalidActions = result.actions;
-      let sizeBeforeConflict;
-      if (chromosomeKey in firstConflict) {
-        sizeBeforeConflict = firstConflict[chromosomeKey];
-      } else {
-        firstConflict[chromosomeKey]= fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
-        sizeBeforeConflict = firstConflict[chromosomeKey];
-      }
-      let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome, config.maximum_size_that_will_be_considered_in_pound);
-      let getBestSequenceSize = 0;
-      if (config.best_subseq_pound > 0) {
-        getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
-      }
-      let collisionsAtEnd = 0;
-      if (numberOfInvalidActions == 0) {
-        collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
-      }
-      let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
-      let sameMoves = 0;
-      if (config.repeating_actions_pound > 0) {
-          sameMoves = fitnessFunction.countSameMoves(chromosome);
-      }
-      let differentQuarters = 0;
-      if (config.different_quarters_pound > 0) {
-          differentQuarters = fitnessFunction.getDifferentQuarters(chromosome);
-      }
-      let maxTimeQuarter = 0;
-      if (config.max_time_quarters_pound > 0) {
-          maxTimeQuarter = fitnessFunction.getMaxTimesQuarter(chromosome);
-      }
-      var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
-                    config.conflict_actions_pound * numberOfInvalidActions +
-                    config.first_conflict_position_pound * sizeBeforeConflict +
-                    config.chrom_size_pound * chromosomeSize +
-                    config.best_subseq_pound * getBestSequenceSize +
-                    config.collision_final_action_pound * collisionsAtEnd+
-                    config.different_actions_pound * differentActions +
-                    config.repeating_actions_pound * sameMoves +
-                    config.different_quarters_pound * differentQuarters+
-                    config.max_time_quarters_pound * maxTimeQuarter;
+    let result = fitnessFunction.getNumberOfPreconditionsNotSatisfied(domain, mapping, chromosome, initialState);
+    let numberOfPreconditionsNotSatisfied = result.preconditions;
+    let numberOfInvalidActions = result.actions;
+    let sizeBeforeConflict;
+    if (chromosomeKey in firstConflict) {
+      sizeBeforeConflict = firstConflict[chromosomeKey];
+    } else {
+      firstConflict[chromosomeKey]= fitnessFunction.getSizeBeforeConflict(domain, mapping, chromosome, initialState);
+      sizeBeforeConflict = firstConflict[chromosomeKey];
+    }
+    let chromosomeSize = fitnessFunction.getChromosozeSize(chromosome, config.maximum_size_that_will_be_considered_in_pound);
+    let getBestSequenceSize = 0;
+    if (config.best_subseq_pound > 0) {
+      getBestSequenceSize = fitnessFunction.getBestSequenceSize(domain, mapping, chromosome, initialState);
+    }
+    let collisionsAtEnd = fitnessFunction.getCountCollisionsAtTheEnd(domain, mapping, chromosome, initialState, goalState);
+    let differentActions = fitnessFunction.getDifferentActions(domain, mapping, chromosome, initialState);
+    let sameMoves = 0;
+    if (config.repeating_actions_pound > 0) {
+        sameMoves = fitnessFunction.countSameMoves(chromosome);
+    }
+    let differentQuarters = 0;
+    if (config.different_quarters_pound > 0) {
+        differentQuarters = fitnessFunction.getDifferentQuarters(chromosome);
+    }
+    let maxTimeQuarter = 0;
+    if (config.max_time_quarters_pound > 0) {
+        maxTimeQuarter = fitnessFunction.getMaxTimesQuarter(chromosome);
+    }
+    console.log("-----------------------------------------------------------------------")
+    console.log(chromosome);
+    console.log("numberOfPreconditionsNotSatisfied: " + numberOfPreconditionsNotSatisfied);
+    console.log("numberOfInvalidActions: " + numberOfInvalidActions);
+    console.log("sizeBeforeConflict: " + sizeBeforeConflict);
+    console.log("chromosomeSize: " + chromosomeSize);
+    console.log("getBestSequenceSize: " + getBestSequenceSize);
+    console.log("collisionsAtEnd: " + collisionsAtEnd);
+    console.log("differentActions: " + differentActions);
+    console.log("sameMoves: " + sameMoves);
+    console.log("-----------------------------------------------------------------------");
+    var fitness = config.conflict_preconditions_pound * numberOfPreconditionsNotSatisfied +
+                  config.conflict_actions_pound * numberOfInvalidActions +
+                  config.first_conflict_position_pound * sizeBeforeConflict +
+                  config.chrom_size_pound * chromosomeSize +
+                  config.best_subseq_pound * getBestSequenceSize +
+                  config.collision_final_action_pound * collisionsAtEnd+
+                  config.different_actions_pound * differentActions +
+                  config.repeating_actions_pound * sameMoves +
+                  config.different_quarters_pound * differentQuarters+
+                  config.max_time_quarters_pound * maxTimeQuarter;
   return fitness;
 };
 

@@ -4,6 +4,7 @@ const config = require("./config.json");
 const seedrandom = require('seedrandom');
 const rng = seedrandom();
 let stateApplyAction = {};
+let preconditionsAreSatisfiedMap = {};
 
 // This is how you deep clone in JavaScript
 const cloneObject = object => JSON.parse(JSON.stringify(object));
@@ -13,7 +14,9 @@ const cloneObject = object => JSON.parse(JSON.stringify(object));
 **/
 let getGoalPreconditions = function(state, goalState) {
     let goalPreconditions = 0;
+    let goalActions = 0;
     for (var i in goalState.actions) {
+        goalActions++;
         var goalAction = goalState.actions[i];
         var operation = goalAction.operation || 'and';
         if (operation == 'and') {
@@ -35,7 +38,7 @@ let getGoalPreconditions = function(state, goalState) {
             }
         }
     }
-    return goalPreconditions;
+    return {goalPreconditions, goalActions};
 };
 
 // it gets the action to apply calculate it with the state and return STRIP apply action
@@ -50,7 +53,6 @@ const updateCurrentState = ({
     let currentStateString = JSON.stringify(currentState);
     let key = currentActionString + actualParametersString + currentStateString;
     if (key in stateApplyAction)  {
-      //console.log("WORKS");
       return stateApplyAction[key];
     }
     let actionToApply = domainActions.find(({
@@ -134,11 +136,19 @@ module.exports = {
                     ),
                     precondition
                 );
-
-                let preconditionIsSatisfied = strips.isPreconditionSatisfied(
-                    state,
-                    [parameterizedPrecondition]
-                );
+                let stateString = JSON.stringify(state);
+                let parameterizedPreconditionString = JSON.stringify(parameterizedPrecondition);
+                let key = stateString + parameterizedPreconditionString;
+                let preconditionIsSatisfied;
+                if (key in preconditionsAreSatisfiedMap) {
+                  preconditionSatisfied = preconditionsAreSatisfiedMap[key];
+                } else {
+                  preconditionIsSatisfied = strips.isPreconditionSatisfied(
+                      state,
+                      [parameterizedPrecondition]
+                  );
+                  preconditionsAreSatisfiedMap[key] = preconditionIsSatisfied;
+                }
                 numberOfPreconditions++;
                 if (!preconditionIsSatisfied) {
                     numberOfPreconditionsNotSatisfied++;
@@ -178,11 +188,19 @@ module.exports = {
                     parameters
                 };
             });
-
-            const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
-                state,
-                preconditions
-            );
+            let stateString = JSON.stringify(state);
+            let preconditionString = JSON.stringify(preconditions);
+            let key = stateString + preconditionString;
+            let preconditionsAreSatisfied;
+            if (key in preconditionsAreSatisfiedMap) {
+              preconditionsAreSatisfied = preconditionsAreSatisfiedMap[key]
+            } else {
+              preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                  state,
+                  preconditions
+              );
+              preconditionsAreSatisfiedMap[key] = preconditionsAreSatisfied;
+            }
             if (!preconditionsAreSatisfied) {
                 numberOfInvalidActions++;
             }
@@ -214,11 +232,19 @@ module.exports = {
                     parameters
                 };
             });
-
-            const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
-                state,
-                preconditions
-            );
+            let stateString = JSON.stringify(state);
+            let preconditionString = JSON.stringify(preconditions);
+            let key = stateString + preconditionString;
+            let preconditionsAreSatisfied;
+            if (key in preconditionsAreSatisfiedMap) {
+              preconditionsAreSatisfied = preconditionsAreSatisfiedMap[key]
+            } else {
+              preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                  state,
+                  preconditions
+              );
+              preconditionsAreSatisfiedMap[key] = preconditionsAreSatisfied;
+            }
             if (!preconditionsAreSatisfied) {
       		      return sizeBeforeConflict;
             } else {
@@ -254,11 +280,19 @@ module.exports = {
                   parameters
               };
           });
-
-          const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
-              state,
-              preconditions
-          );
+          let stateString = JSON.stringify(state);
+          let preconditionString = JSON.stringify(preconditions);
+          let key = stateString + preconditionString;
+          let preconditionsAreSatisfied;
+          if (key in preconditionsAreSatisfiedMap) {
+            preconditionsAreSatisfied = preconditionsAreSatisfiedMap[key]
+          } else {
+            preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                state,
+                preconditions
+            );
+            preconditionsAreSatisfiedMap[key] = preconditionsAreSatisfied;
+          }
           if (!preconditionsAreSatisfied) {
       		    sequenceSize.push(sizeUntillConflict);
 			        sizeUntillConflict = 0;
@@ -319,11 +353,19 @@ module.exports = {
                   parameters
               };
           });
-
-          const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
-              state,
-              preconditions
-          );
+          let stateString = JSON.stringify(state);
+          let preconditionsString = JSON.stringify(preconditions);
+          let key = stateString + preconditionsString;
+          let preconditionsAreSatisfied;
+          if (key in preconditionsAreSatisfiedMap) {
+            preconditionsAreSatisfied = preconditionsAreSatisfiedMap[key]
+          } else {
+            preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+                state,
+                preconditions
+            );
+            preconditionsAreSatisfiedMap[key] = preconditionsAreSatisfied;
+          }
           if (!preconditionsAreSatisfied) {
       		    sequenceSize.push(sizeUntillConflict);
 			        sizeUntillConflict = 0;
@@ -349,6 +391,8 @@ module.exports = {
 	},
   getCountCollisionsAtTheEnd(domain, mapping, chromosome, currentState, goalState) {
     let state = cloneObject(currentState);
+    let goalPreconditions = 0;
+    let numberOfPreconditions = 1;
     for (let i = 0; i < chromosome.length; i++) {
         let currentAction = chromosome[i][0];
         let currentParameters = chromosome[i][1];
@@ -361,11 +405,20 @@ module.exports = {
                 parameters
             };
         });
+        let stateString = JSON.stringify(state);
+        let preconditionsString = JSON.stringify(preconditions);
+        let key = stateString + preconditionsString;
+        let preconditionsAreSatisfied;
+        if (key in preconditionsAreSatisfiedMap) {
+          preconditionsAreSatisfied = preconditionsAreSatisfiedMap[key]
+        } else {
+          preconditionsAreSatisfied = strips.isPreconditionSatisfied(
+              state,
+              preconditions
+          );
+          preconditionsAreSatisfiedMap[key] = preconditionsAreSatisfied;
 
-        const preconditionsAreSatisfied = strips.isPreconditionSatisfied(
-            state,
-            preconditions
-        );
+        }
         if (!preconditionsAreSatisfied) {
             // Here we can add logic what to do when the preconditions are not met
         }
@@ -376,9 +429,12 @@ module.exports = {
                 actualParameters,
                 currentState: state,
             });
+            let goalPreconditionsObject= getGoalPreconditions(state, goalState)
+            goalPreconditions = goalPreconditionsObject.goalPreconditions;
+            numberOfPreconditions = goalPreconditionsObject.goalActions;
         }
     }
-    return getGoalPreconditions(state, goalState);
+    return goalPreconditions / numberOfPreconditions;
   },
 
   getDifferentActions(domain, mapping, chromosome, currentState) {

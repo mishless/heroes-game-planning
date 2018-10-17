@@ -1,0 +1,19 @@
+- Solution found in 17 steps!
+1. move h p0 p1
+2. move h p1 p2
+3. move h p2 p7
+4. move h p7 p8
+5. collect-w1 h w1 p8
+6. move h p8 p7
+7. move h p7 p12
+8. move h p12 p17
+9. move h p17 p22
+10. collect-w0 h w0 p22
+11. move h p22 p21
+12. kill-m1 h m10 p21 p20
+13. move h p20 p21
+14. collect-w2 h w2 p21
+15. move h p21 p16
+16. kill-m2 h m20 p16 p11
+17. kill-m0 h m00 p11 p6
+time (ms): 535482

@@ -60,11 +60,13 @@ for (let p=0; p<1; p++) {
           if (i % 10 === 0) {
             GA.cleanLoops(initialPopulation);
           }
-          //console.log("----------------------------------------");
-          //console.log(test.individual);
-          //GA.printFitness(test.individual, domain, mapping, problem.states[0], problem.states[1]);
-          //console.log(test.bestFitness);
-          //console.log("----------------------------------------");
+          if (i % 50 === 0) {
+            console.log("----------------Generation " + i + "------------------------");
+            console.log(test.individual);
+            GA.printFitness(test.individual, domain, mapping, problem.states[0], problem.states[1]);
+            console.log(test.bestFitness);
+            console.log("----------------------------------------");
+          }
         }
         let endOfIteration = new Date().getTime();
         times.push(endOfIteration - start);

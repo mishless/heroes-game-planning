@@ -1,5 +1,5 @@
 {
-  "generations": 500,
+  "generations": 1000,
   "crossover_prob": 0.8,
   "crossover_from_conflict_prob" : 0.5,
   "mutate_from_conflict_prob" : 0.5,

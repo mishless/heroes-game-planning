@@ -307,7 +307,7 @@ def createNewPopulation(population, populationFitness, grid,gridToGraph):
   forMutation = []
 
   sortedIndices = np.argsort(populationFitness)
-  newPopulation.extend(list(np.array(population)[sortedIndices[-2:]].tolist())) #send so many best parents to the next generation
+  newPopulation.extend(list(np.array(population)[sortedIndices[-20:]].tolist())) #send so many best parents to the next generation
   # Roulette wheel selection
   while len(forMutation) < len(population) - len(newPopulation):
     u = rnd.random()

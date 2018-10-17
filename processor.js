@@ -22,17 +22,17 @@ fs.writeFile("./hero_problem.pddl" , PROBLEM, err => {
 let results = {};
 
 const runLoader = async () => {
-for (let p=0; p<3; p++) {
+for (let p=0; p<1; p++) {
   results[p] = {};
   await new Promise(resolve => strips.load(
-    "./Maps/hero_domain_3_by_3_2_monsters.pddl",
-    "./Maps/hero_problem_3_by_3_1_block_2_monsters_"+p+".pddl",
+    "./Maps/hero_domain_5_by_5_3_monsters.pddl",
+    "./Maps/hero_problem_5_by_5_3_blocks_3_monsters_"+p+".pddl",
     (domain, problem) => {
       // Get encoding for GA
       var mapping = GA.encode(domain, problem);
       let times = [];
       let lengths = [];
-      for (let j = 0; j<5; j++) {
+      for (let j = 0; j<1; j++) {
         results[p][j] = {};
         // Generate initial population
         var initialPopulation = GA.generateIntialPopulation(
@@ -82,8 +82,8 @@ for (let p=0; p<3; p++) {
       resolve();
     }))
   }
-  for (let i = 0; i<3; i++) {
-    for (let j = 0; j<5; j++) {
+  for (let i = 0; i<1; i++) {
+    for (let j = 0; j<1; j++) {
       console.log("Map # " + i + ", iteration # " + j + ": " + JSON.stringify(results[i][j]));
     }
   }

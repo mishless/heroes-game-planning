@@ -367,8 +367,8 @@ def fillGrid(gridX):
             filledGrid[i,j] = gridX[i][j]
     return filledGrid
 
-generations = 100 # how many iterations 
-populationSize = 10 # how many individuals in each iteration
+generations = 200 # how many iterations 
+populationSize = 68 # how many individuals in each iteration
 
 gridSize = 5
 obstacles = 3
